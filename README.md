@@ -28,3 +28,8 @@ L’adresse sera généralement :
 - contenu public sans spoilers majeurs ;
 - progression par paliers de Souffles ;
 - séparation entre informations publiques et archives de fin de série.
+
+
+## Mise à jour encyclopédie
+
+Ajout de 15 fiches interactives, recherche, filtres, citations, anecdotes et protection anti-spoilers.

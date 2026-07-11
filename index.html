@@ -100,76 +100,44 @@
 
     <section class="section characters" id="personnages" aria-labelledby="characters-title">
       <div class="section-heading reveal">
-        <p class="section-index">02 — PERSONNAGES</p>
-        <h2 id="characters-title">Les forces qui donnent un visage au réel.</h2>
-        <p>Une sélection volontairement sans révélations tardives. Chaque fiche présente uniquement le noyau public du personnage.</p>
+        <p class="section-index">02 — ENCYCLOPÉDIE DES PERSONNAGES</p>
+        <h2 id="characters-title">Les dossiers de la Conscience.</h2>
+        <p>Une encyclopédie interactive avec recherche, filtres, apparence, personnalité, relations, citations et anecdotes. Les révélations tardives restent masquées par défaut.</p>
       </div>
 
-      <div class="character-grid">
-        <article class="character-card concept-reason reveal" tabindex="0">
-          <div class="character-symbol" aria-hidden="true">R</div>
-          <div class="character-meta"><span>RAISON</span><span>PROTAGONISTE</span></div>
-          <h3>Amado Shirogane</h3>
-          <p>La Raison incarnée. Un arbitre calme, tranchant et souvent contraint de porter plus que ce qu’il montre.</p>
-          <div class="character-line"></div>
-        </article>
+      <div class="wiki-toolbar reveal" aria-label="Outils de l’encyclopédie">
+        <label class="wiki-search">
+          <span class="sr-only">Rechercher un personnage</span>
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/></svg>
+          <input id="character-search" type="search" autocomplete="off" placeholder="Rechercher un nom, un concept, un rôle…">
+          <kbd>/</kbd>
+        </label>
 
-        <article class="character-card concept-sense reveal" tabindex="0">
-          <div class="character-symbol" aria-hidden="true">S</div>
-          <div class="character-meta"><span>SENS</span><span>PRIMORDIALE</span></div>
-          <h3>Noésis Absoluta</h3>
-          <p>Le Sens devenu conscience. Autoritaire, ironique et indispensable dès que l’existence exige une direction.</p>
-          <div class="character-line"></div>
-        </article>
+        <div class="wiki-filters" role="group" aria-label="Filtrer les personnages">
+          <button class="filter-chip active" type="button" data-filter="all">Tous</button>
+          <button class="filter-chip" type="button" data-filter="fondations">Fondations</button>
+          <button class="filter-chip" type="button" data-filter="primordiales">Primordiales</button>
+          <button class="filter-chip" type="button" data-filter="ama-girls">Ama Girls</button>
+          <button class="filter-chip" type="button" data-filter="antagonistes">Antagonistes</button>
+        </div>
 
-        <article class="character-card concept-imagination reveal" tabindex="0">
-          <div class="character-symbol" aria-hidden="true">I</div>
-          <div class="character-meta"><span>IMAGINATION</span><span>CRÉATRICE</span></div>
-          <h3>Rebecca Shirogane</h3>
-          <p>L’Imagination capable de donner forme à l’impossible — et de transformer la création en foyer.</p>
-          <div class="character-line"></div>
-        </article>
-
-        <article class="character-card concept-void reveal" tabindex="0">
-          <div class="character-symbol" aria-hidden="true">V</div>
-          <div class="character-meta"><span>NÉANT</span><span>PRIMORDIALE</span></div>
-          <h3>Nyxara Abyssgarde</h3>
-          <p>Le Néant primordial, aussi ancien que redoutable. Une présence joueuse dont la tendresse n’efface jamais l’abîme.</p>
-          <div class="character-line"></div>
-        </article>
-
-        <article class="character-card concept-time reveal" tabindex="0">
-          <div class="character-symbol" aria-hidden="true">T</div>
-          <div class="character-meta"><span>TEMPS</span><span>SOUVERAINE</span></div>
-          <h3>Orphéa Aurora</h3>
-          <p>Le Temps Absolu sous une forme majestueuse et expressive. Elle gouverne un univers où le temps est la matière première.</p>
-          <div class="character-line"></div>
-        </article>
-
-        <article class="character-card concept-aesthetic reveal" tabindex="0">
-          <div class="character-symbol" aria-hidden="true">E</div>
-          <div class="character-meta"><span>ESTHÉTIQUE</span><span>ARCHITECTE</span></div>
-          <h3>Iris Marthory-Vaucluse</h3>
-          <p>L’Esthéticienne de la Conscience. Première création, architecte des enveloppes et gardienne de la beauté incarnée.</p>
-          <div class="character-line"></div>
-        </article>
-
-        <article class="character-card concept-doubt reveal" tabindex="0">
-          <div class="character-symbol" aria-hidden="true">D</div>
-          <div class="character-meta"><span>DOUTE</span><span>ANTAGONISTE</span></div>
-          <h3>Cael Virelios</h3>
-          <p>Le Doute méthodique. Il ne détruit pas seulement les réponses : il force chaque certitude à prouver qu’elle mérite d’exister.</p>
-          <div class="character-line"></div>
-        </article>
-
-        <article class="character-card concept-family reveal" tabindex="0">
-          <div class="character-symbol seven" aria-hidden="true">7</div>
-          <div class="character-meta"><span>AMA GIRLS</span><span>FAMILLE</span></div>
-          <h3>Les sept sœurs Shirogane</h3>
-          <p>Vérité, Liberté, Nature, Harmonie, Perfection, Logique et Silence : sept concepts, sept trajectoires, une même famille.</p>
-          <div class="character-line"></div>
-        </article>
+        <button class="spoiler-switch" id="spoiler-switch" type="button" aria-pressed="false">
+          <span class="spoiler-switch-dot" aria-hidden="true"></span>
+          <span><strong>Mode spoilers</strong><small>Désactivé</small></span>
+        </button>
       </div>
+
+      <div class="wiki-result-line reveal">
+        <span id="character-count">0 dossier</span>
+        <span>Cliquer sur une carte pour ouvrir la fiche complète</span>
+      </div>
+
+      <div class="character-grid wiki-grid" id="character-grid" aria-live="polite"></div>
+      <p class="wiki-empty" id="wiki-empty" hidden>Aucun dossier ne correspond à cette recherche.</p>
+
+      <noscript>
+        <p class="wiki-noscript">Active JavaScript pour consulter les fiches interactives.</p>
+      </noscript>
     </section>
 
     <section class="section cosmology" id="cosmologie" aria-labelledby="cosmology-title">
@@ -284,6 +252,75 @@
       </div>
     </section>
   </main>
+
+
+  <dialog class="character-dialog" id="character-dialog" aria-labelledby="profile-name">
+    <div class="dialog-shell">
+      <button class="dialog-close" id="dialog-close" type="button" aria-label="Fermer la fiche">×</button>
+
+      <aside class="profile-identity">
+        <div class="profile-orbit" aria-hidden="true"><span id="profile-symbol">S</span></div>
+        <p class="profile-kicker" id="profile-kicker">DOSSIER</p>
+        <h2 id="profile-name">Personnage</h2>
+        <p class="profile-concept" id="profile-concept"></p>
+        <div class="profile-badges" id="profile-badges"></div>
+        <button class="profile-link" id="profile-link" type="button">Copier le lien de la fiche</button>
+      </aside>
+
+      <div class="profile-content">
+        <nav class="profile-tabs" aria-label="Sections de la fiche">
+          <button class="profile-tab active" type="button" data-tab="overview">Aperçu</button>
+          <button class="profile-tab" type="button" data-tab="identity">Physique & personnalité</button>
+          <button class="profile-tab" type="button" data-tab="archive">Citations & anecdotes</button>
+        </nav>
+
+        <section class="profile-panel active" data-panel="overview">
+          <p class="profile-summary" id="profile-summary"></p>
+          <dl class="profile-facts" id="profile-facts"></dl>
+          <div class="profile-block">
+            <p class="profile-label">RELATIONS PRINCIPALES</p>
+            <div class="relation-list" id="profile-relations"></div>
+          </div>
+        </section>
+
+        <section class="profile-panel" data-panel="identity">
+          <div class="profile-two-columns">
+            <article class="profile-block">
+              <p class="profile-label">DESCRIPTION PHYSIQUE</p>
+              <p id="profile-appearance"></p>
+            </article>
+            <article class="profile-block">
+              <p class="profile-label">PERSONNALITÉ</p>
+              <p id="profile-personality"></p>
+            </article>
+          </div>
+          <article class="profile-block profile-note">
+            <p class="profile-label">STATUT DOCUMENTAIRE</p>
+            <p id="profile-source-note"></p>
+          </article>
+        </section>
+
+        <section class="profile-panel" data-panel="archive">
+          <blockquote class="profile-quote">
+            <p id="profile-quote"></p>
+            <footer id="profile-quote-author"></footer>
+          </blockquote>
+          <article class="profile-block">
+            <p class="profile-label">ANECDOTES</p>
+            <ul class="anecdote-list" id="profile-anecdotes"></ul>
+          </article>
+          <article class="profile-spoilers" id="profile-spoilers">
+            <div>
+              <p class="profile-label">ARCHIVES À SPOILERS</p>
+              <p id="spoiler-lock-copy">Cette partie est masquée pour préserver la découverte.</p>
+            </div>
+            <button class="button button-ghost" id="reveal-profile-spoilers" type="button">Révéler</button>
+            <ul class="anecdote-list spoiler-content" id="profile-spoiler-list"></ul>
+          </article>
+        </section>
+      </div>
+    </div>
+  </dialog>
 
   <footer class="site-footer">
     <div class="footer-brand">
