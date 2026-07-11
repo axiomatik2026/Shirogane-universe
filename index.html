@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#08090d">
+  <meta name="description" content="Site officiel de Shirogane Universe — une saga cosmique sur la raison, le sens, le doute et la famille.">
+  <title>Shirogane Universe — Site officiel</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <canvas id="starfield" aria-hidden="true"></canvas>
+  <div class="noise" aria-hidden="true"></div>
+
+  <header class="site-header" id="top">
+    <a class="brand" href="#top" aria-label="Shirogane Universe, accueil">
+      <span class="brand-mark" aria-hidden="true">S</span>
+      <span class="brand-copy">
+        <strong>SHIROGANE</strong>
+        <small>UNIVERSE</small>
+      </span>
+    </a>
+
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav">
+      <span></span><span></span><span></span>
+      <span class="sr-only">Ouvrir le menu</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="Navigation principale">
+      <a href="#univers">L’univers</a>
+      <a href="#personnages">Personnages</a>
+      <a href="#cosmologie">Cosmologie</a>
+      <a href="#lecture">Lecture</a>
+      <a href="#archives" class="nav-archive">Archives</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-orbit hero-orbit-one" aria-hidden="true"></div>
+      <div class="hero-orbit hero-orbit-two" aria-hidden="true"></div>
+      <div class="hero-sigil" aria-hidden="true">
+        <span class="sigil-core">S</span>
+        <span class="sigil-ring ring-a"></span>
+        <span class="sigil-ring ring-b"></span>
+        <span class="sigil-ring ring-c"></span>
+      </div>
+
+      <div class="hero-content reveal">
+        <p class="eyebrow">COSMOLOGIE · CONSCIENCE · FAMILLE</p>
+        <h1 id="hero-title">Quand les concepts prennent corps, l’univers devient une affaire de famille.</h1>
+        <p class="hero-lead">
+          Une saga où la Raison, le Sens, le Temps, le Néant, l’Imagination et le Doute ne sont plus de simples idées — mais des êtres capables d’aimer, de se tromper et de choisir.
+        </p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#univers">Entrer dans l’univers</a>
+          <a class="button button-ghost" href="#lecture">Guide sans spoilers</a>
+        </div>
+      </div>
+
+      <div class="hero-stats reveal" aria-label="Chiffres clés de l’œuvre">
+        <div><strong>26</strong><span>Souffles</span></div>
+        <div><strong>1 225</strong><span>Chapitres indexés</span></div>
+        <div><strong>8 800</strong><span>Pages de corpus</span></div>
+      </div>
+
+      <a class="scroll-cue" href="#univers" aria-label="Continuer vers la présentation">
+        <span></span>
+      </a>
+    </section>
+
+    <section class="section intro" id="univers" aria-labelledby="universe-title">
+      <div class="section-heading reveal">
+        <p class="section-index">01 — L’UNIVERS</p>
+        <h2 id="universe-title">La création n’était que le commencement.</h2>
+        <p>
+          Shirogane Universe suit une famille d’entités conceptuelles depuis la genèse du réel. À mesure que leur puissance grandit, la question centrale change : il ne s’agit plus seulement de protéger l’existence, mais d’apprendre à vivre avec elle.
+        </p>
+      </div>
+
+      <div class="manifesto-grid">
+        <article class="manifesto-card reveal">
+          <span class="card-number">I</span>
+          <h3>Des idées incarnées</h3>
+          <p>Chaque concept possède une voix, une volonté et une manière unique de lire le réel.</p>
+        </article>
+        <article class="manifesto-card reveal">
+          <span class="card-number">II</span>
+          <h3>Une cosmologie vivante</h3>
+          <p>Les mondes, les domaines et les lois métaphysiques évoluent avec ceux qui les portent.</p>
+        </article>
+        <article class="manifesto-card reveal">
+          <span class="card-number">III</span>
+          <h3>La famille au centre</h3>
+          <p>Derrière les conflits cosmiques demeure une histoire de responsabilité, de consentement et de liens choisis.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section characters" id="personnages" aria-labelledby="characters-title">
+      <div class="section-heading reveal">
+        <p class="section-index">02 — PERSONNAGES</p>
+        <h2 id="characters-title">Les forces qui donnent un visage au réel.</h2>
+        <p>Une sélection volontairement sans révélations tardives. Chaque fiche présente uniquement le noyau public du personnage.</p>
+      </div>
+
+      <div class="character-grid">
+        <article class="character-card concept-reason reveal" tabindex="0">
+          <div class="character-symbol" aria-hidden="true">R</div>
+          <div class="character-meta"><span>RAISON</span><span>PROTAGONISTE</span></div>
+          <h3>Amado Shirogane</h3>
+          <p>La Raison incarnée. Un arbitre calme, tranchant et souvent contraint de porter plus que ce qu’il montre.</p>
+          <div class="character-line"></div>
+        </article>
+
+        <article class="character-card concept-sense reveal" tabindex="0">
+          <div class="character-symbol" aria-hidden="true">S</div>
+          <div class="character-meta"><span>SENS</span><span>PRIMORDIALE</span></div>
+          <h3>Noésis Absoluta</h3>
+          <p>Le Sens devenu conscience. Autoritaire, ironique et indispensable dès que l’existence exige une direction.</p>
+          <div class="character-line"></div>
+        </article>
+
+        <article class="character-card concept-imagination reveal" tabindex="0">
+          <div class="character-symbol" aria-hidden="true">I</div>
+          <div class="character-meta"><span>IMAGINATION</span><span>CRÉATRICE</span></div>
+          <h3>Rebecca Shirogane</h3>
+          <p>L’Imagination capable de donner forme à l’impossible — et de transformer la création en foyer.</p>
+          <div class="character-line"></div>
+        </article>
+
+        <article class="character-card concept-void reveal" tabindex="0">
+          <div class="character-symbol" aria-hidden="true">V</div>
+          <div class="character-meta"><span>NÉANT</span><span>PRIMORDIALE</span></div>
+          <h3>Nyxara Abyssgarde</h3>
+          <p>Le Néant primordial, aussi ancien que redoutable. Une présence joueuse dont la tendresse n’efface jamais l’abîme.</p>
+          <div class="character-line"></div>
+        </article>
+
+        <article class="character-card concept-time reveal" tabindex="0">
+          <div class="character-symbol" aria-hidden="true">T</div>
+          <div class="character-meta"><span>TEMPS</span><span>SOUVERAINE</span></div>
+          <h3>Orphéa Aurora</h3>
+          <p>Le Temps Absolu sous une forme majestueuse et expressive. Elle gouverne un univers où le temps est la matière première.</p>
+          <div class="character-line"></div>
+        </article>
+
+        <article class="character-card concept-aesthetic reveal" tabindex="0">
+          <div class="character-symbol" aria-hidden="true">E</div>
+          <div class="character-meta"><span>ESTHÉTIQUE</span><span>ARCHITECTE</span></div>
+          <h3>Iris Marthory-Vaucluse</h3>
+          <p>L’Esthéticienne de la Conscience. Première création, architecte des enveloppes et gardienne de la beauté incarnée.</p>
+          <div class="character-line"></div>
+        </article>
+
+        <article class="character-card concept-doubt reveal" tabindex="0">
+          <div class="character-symbol" aria-hidden="true">D</div>
+          <div class="character-meta"><span>DOUTE</span><span>ANTAGONISTE</span></div>
+          <h3>Cael Virelios</h3>
+          <p>Le Doute méthodique. Il ne détruit pas seulement les réponses : il force chaque certitude à prouver qu’elle mérite d’exister.</p>
+          <div class="character-line"></div>
+        </article>
+
+        <article class="character-card concept-family reveal" tabindex="0">
+          <div class="character-symbol seven" aria-hidden="true">7</div>
+          <div class="character-meta"><span>AMA GIRLS</span><span>FAMILLE</span></div>
+          <h3>Les sept sœurs Shirogane</h3>
+          <p>Vérité, Liberté, Nature, Harmonie, Perfection, Logique et Silence : sept concepts, sept trajectoires, une même famille.</p>
+          <div class="character-line"></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section cosmology" id="cosmologie" aria-labelledby="cosmology-title">
+      <div class="section-heading reveal">
+        <p class="section-index">03 — COSMOLOGIE</p>
+        <h2 id="cosmology-title">Des mondes séparés par leurs propres lois.</h2>
+        <p>La cosmologie n’est pas un décor figé. Chaque plan impose une logique, une densité et une relation différente à l’existence.</p>
+      </div>
+
+      <div class="cosmos-layout">
+        <div class="cosmos-map reveal" aria-label="Carte abstraite de la cosmologie">
+          <div class="cosmos-node node-consciousness"><span>Conscience</span></div>
+          <div class="cosmos-node node-interworld"><span>Intermonde</span></div>
+          <div class="cosmos-node node-time"><span>Temps Absolu</span></div>
+          <div class="cosmos-node node-earth"><span>Terre</span></div>
+          <div class="cosmos-node node-domains"><span>Domaines</span></div>
+          <svg class="cosmos-links" viewBox="0 0 600 600" aria-hidden="true">
+            <path d="M300 100 C300 190 300 210 300 290" />
+            <path d="M300 300 C210 330 150 375 120 470" />
+            <path d="M300 300 C390 330 450 375 480 470" />
+            <path d="M300 300 C220 260 150 220 100 170" />
+            <path d="M300 300 C380 260 450 220 500 170" />
+          </svg>
+        </div>
+
+        <div class="cosmos-list">
+          <article class="cosmos-item reveal">
+            <span>01</span>
+            <div><h3>L’Intermonde</h3><p>Espace neutre de transit, d’entraînement et de rencontre entre des réalités incompatibles.</p></div>
+          </article>
+          <article class="cosmos-item reveal">
+            <span>02</span>
+            <div><h3>L’Univers du Temps Absolu</h3><p>Plan adjacent gouverné par Orphéa Aurora, où le Temps constitue la structure fondamentale.</p></div>
+          </article>
+          <article class="cosmos-item reveal">
+            <span>03</span>
+            <div><h3>Les Domaines conceptuels</h3><p>Territoires accordés à l’essence de leurs souverains, capables d’altérer les règles locales du réel.</p></div>
+          </article>
+          <article class="cosmos-item reveal">
+            <span>04</span>
+            <div><h3>La Terre et les Wardens</h3><p>Le monde humain reste un lieu d’apprentissage, mais aussi un front protégé par sept gardiennes continentales.</p></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section themes" aria-labelledby="themes-title">
+      <div class="section-heading reveal">
+        <p class="section-index">04 — THÉMATIQUES</p>
+        <h2 id="themes-title">La puissance ne répond pas aux questions essentielles.</h2>
+      </div>
+
+      <div class="theme-marquee reveal" aria-hidden="true">
+        <div class="theme-track">
+          <span>RAISON</span><i>×</i><span>SENS</span><i>×</i><span>DOUTE</span><i>×</i><span>LIBRE ARBITRE</span><i>×</i><span>FAMILLE</span><i>×</i>
+          <span>RAISON</span><i>×</i><span>SENS</span><i>×</i><span>DOUTE</span><i>×</i><span>LIBRE ARBITRE</span><i>×</i><span>FAMILLE</span><i>×</i>
+        </div>
+      </div>
+
+      <div class="quote-panel reveal">
+        <p>« Le sens précède ta question. »</p>
+        <span>— Noésis</span>
+      </div>
+    </section>
+
+    <section class="section reading" id="lecture" aria-labelledby="reading-title">
+      <div class="section-heading reveal">
+        <p class="section-index">05 — GUIDE DE LECTURE</p>
+        <h2 id="reading-title">Explorer sans sacrifier la découverte.</h2>
+        <p>Le site public suit une encyclopédie progressive. Les informations ne deviennent visibles qu’après le palier narratif correspondant.</p>
+      </div>
+
+      <div class="reading-grid">
+        <article class="reading-card reveal">
+          <div class="reading-top"><span>PALIER I</span><span class="status-open">OUVERT</span></div>
+          <h3>Souffles 1–4</h3>
+          <p>Genèse, premiers concepts, fondations de la famille et règles initiales.</p>
+          <div class="progress"><span style="width: 100%"></span></div>
+        </article>
+        <article class="reading-card reveal">
+          <div class="reading-top"><span>PALIER II</span><span class="status-open">OUVERT</span></div>
+          <h3>Souffles 5–8</h3>
+          <p>Élargissement des mondes, nouvelles responsabilités et premières fractures.</p>
+          <div class="progress"><span style="width: 100%"></span></div>
+        </article>
+        <article class="reading-card locked reveal">
+          <div class="reading-top"><span>PALIER III</span><span class="status-locked">VERROUILLÉ</span></div>
+          <h3>Souffles 9–16</h3>
+          <p>Fiches et chronologies masquées pour protéger les révélations majeures.</p>
+          <div class="progress"><span style="width: 42%"></span></div>
+        </article>
+        <article class="reading-card locked reveal">
+          <div class="reading-top"><span>PALIER IV</span><span class="status-locked">VERROUILLÉ</span></div>
+          <h3>Souffles 17–26</h3>
+          <p>Archives de fin de série, cosmologie complète et trajectoires finales.</p>
+          <div class="progress"><span style="width: 12%"></span></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section archive" id="archives" aria-labelledby="archive-title">
+      <div class="archive-shell reveal">
+        <div class="archive-lock" aria-hidden="true">
+          <span></span>
+        </div>
+        <p class="section-index">06 — ARCHIVES</p>
+        <h2 id="archive-title">Données sensibles de la Conscience</h2>
+        <p>
+          Les biographies intégrales, hiérarchies, événements tardifs et états finaux restent volontairement masqués sur la version publique.
+        </p>
+        <button class="button button-disabled" type="button" disabled>Accès après le Souffle 26</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-brand">
+      <span class="brand-mark" aria-hidden="true">S</span>
+      <div><strong>SHIROGANE UNIVERSE</strong><p>Une œuvre d’Amado Shirogane</p></div>
+    </div>
+    <p class="footer-note">Site officiel — édition publique sans spoilers majeurs.</p>
+    <a href="#top">Retour au sommet ↑</a>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
