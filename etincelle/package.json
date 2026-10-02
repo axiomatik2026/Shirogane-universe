@@ -1,0 +1,1 @@
+{"name":"etincelle-android","version":"1.0.0","private":true,"description":"Générateur éditorial d’idées d’applications, hors ligne","scripts":{"test":"node tests/ui.cjs"},"devDependencies":{"playwright":"1.62.1"}}
