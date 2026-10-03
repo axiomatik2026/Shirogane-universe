@@ -23,7 +23,7 @@ mkdir -p "$(dirname "$KEY")"
 if [ ! -f "$KEY" ]; then
  keytool -genkeypair -keystore "$KEY" -storepass android -keypass android -alias echos -dname 'CN=Echos, OU=Personal Android App' -keyalg RSA -keysize 2048 -validity 10000 -noprompt
 fi
-"$BT/apksigner" sign --ks "$KEY" --ks-key-alias echos --ks-pass pass:android --key-pass pass:android --out dist/Echos-1.0.0.apk "$BUILD/aligned.apk"
-"$BT/apksigner" verify --verbose dist/Echos-1.0.0.apk
-"$BT/aapt2" dump badging dist/Echos-1.0.0.apk | head -8
-sha256sum dist/Echos-1.0.0.apk > dist/SHA256SUMS.txt
+"$BT/apksigner" sign --ks "$KEY" --ks-key-alias echos --ks-pass pass:android --key-pass pass:android --out dist/Echos-1.1.0.apk "$BUILD/aligned.apk"
+"$BT/apksigner" verify --verbose dist/Echos-1.1.0.apk
+"$BT/aapt2" dump badging dist/Echos-1.1.0.apk | head -8
+sha256sum dist/Echos-1.1.0.apk > dist/SHA256SUMS.txt
