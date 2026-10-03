@@ -1,0 +1,6 @@
+node_modules/
+corpus.json
+android/build/
+android/.signing/
+android/releases/
+*.idsig

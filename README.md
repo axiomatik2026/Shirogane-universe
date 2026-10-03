@@ -33,3 +33,8 @@ L’adresse sera généralement :
 ## Mise à jour encyclopédie
 
 Ajout de 15 fiches interactives, recherche, filtres, citations, anecdotes et protection anti-spoilers.
+
+
+## Wiki Android des dix tomes
+
+Le [wiki Shirogane Universe](wiki/README.md) ajoute 177 dossiers, une application Android hors connexion et un index de 1 259 chapitres. Le code et les synthèses sont publiés dans `wiki/`. Le texte intégral des tomes et l’APK qui le contient restent dans la version privée fournie à l’auteur.
