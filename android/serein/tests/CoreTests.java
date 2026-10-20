@@ -17,6 +17,9 @@ public class CoreTests {
   check(!Policy.allowedUrl("intent://example.com",""),"external scheme");
   check(!Policy.allowedUrl("https://safe.org@pornhub.com",""),"userinfo");
   check(Policy.allowedUrl("https://wikipedia.org/wiki/Android",""),"regular document");
+  for(String host:Arrays.asList("google.com","wikipedia.org","github.com","reddit.com","crunchyroll.com","mangaplus.shueisha.co.jp","pornic.fr"))check(Policy.allowedUrl("https://"+host,""),"ordinary host "+host);
+  check(Policy.allowedUrl("https://example.org/unexpected-nudges",""),"normal URL path");
+  check(Policy.allowedUrl("https://example.org/search?q=pornic",""),"whole token false positive");
   ByteArrayOutputStream b=new ByteArrayOutputStream();b.write(new byte[]{0x12,0x34,1,0,0,1,0,0,0,0,0,0});for(String s:"example.com".split("\\.")){b.write(s.length());b.write(s.getBytes("US-ASCII"));}b.write(new byte[]{0,0,1,0,1});byte[] q=b.toByteArray();
   check(DnsPacket.question(q).equals("example.com"),"question parser");
   byte[] malformed=q.clone();malformed[12]=(byte)255;check(DnsPacket.question(malformed).isEmpty(),"bad DNS label");

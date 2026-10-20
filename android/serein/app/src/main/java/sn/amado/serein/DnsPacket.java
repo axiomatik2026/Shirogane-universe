@@ -24,6 +24,15 @@ public final class DnsPacket {
         }
         return "";
     }
+    public static boolean matchesResponse(byte[] q,byte[] r) {
+        if(q.length<17 || r.length<17 || q[0]!=r[0] || q[1]!=r[1] || (r[2]&128)==0) return false;
+        byte[] copy=r.clone();copy[2]&=0x7f;
+        String a=question(q),b=question(copy);
+        if(a.isEmpty() || !a.equalsIgnoreCase(b))return false;
+        int end=12;while(end<q.length && q[end]!=0)end+=1+(q[end]&255);
+        int other=12;while(other<r.length && r[other]!=0)other+=1+(r[other]&255);
+        return end+4<q.length && other+4<r.length && u16(q,end+1)==u16(r,other+1) && u16(q,end+3)==u16(r,other+3);
+    }
     public static byte[] error(byte[] q,int rcode) {
         byte[] r=q.clone(); r[2]=(byte)0x81; r[3]=(byte)(0x80|rcode);
         Arrays.fill(r,6,12,(byte)0); return r;

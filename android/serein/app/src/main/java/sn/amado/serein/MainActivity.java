@@ -24,14 +24,14 @@ public class MainActivity extends Activity {
         text("Moins de tentations. Une navigation choisie.",16,0xff9aafbf);
         status=text("Protection désactivée",24,INK);detail=text("",14,0xff9aafbf);
         toggle=button("Activer la protection",()->{
-            if(ShieldService.running){stopService(new Intent(this,ShieldService.class));return;}
-            new AlertDialog.Builder(this).setTitle("Activer le filtre DNS ?").setMessage("Serein utilise le créneau VPN Android pour filtrer les domaines. Les requêtes DNS sont chiffrées et envoyées au filtre familial CleanBrowsing. Serein ne stocke pas ton historique. Un autre VPN ne peut pas fonctionner en même temps. Le filtre ne reconnaît pas les photos dans les réseaux sociaux.").setNegativeButton("Annuler",null).setPositiveButton("Activer",(d,w)->{
+            if(ShieldService.running || ShieldService.starting){stopService(new Intent(this,ShieldService.class));return;}
+            new AlertDialog.Builder(this).setTitle("Activer le filtre DNS ?").setMessage("Serein utilise le créneau VPN Android pour filtrer les domaines. Les requêtes DNS sont chiffrées via HTTPS et envoyées au filtre adulte CleanBrowsing. Si ce serveur devient inaccessible, le VPN sera arrêté et une alerte indiquera que la protection est désactivée. Serein ne stocke pas ton historique. Un autre VPN ne peut pas fonctionner en même temps. Le filtre ne reconnaît pas les photos dans les réseaux sociaux.").setNegativeButton("Annuler",null).setPositiveButton("Activer",(d,w)->{
                 if(Build.VERSION.SDK_INT>=33 && checkSelfPermission("android.permission.POST_NOTIFICATIONS")!=0) requestPermissions(new String[]{"android.permission.POST_NOTIFICATIONS"},8);
                 Intent consent=android.net.VpnService.prepare(this);if(consent!=null)startActivityForResult(consent,7);else startShield();
             }).show();
         });
         button("Ouvrir le navigateur sans images",()->startActivity(new Intent(this,BrowserActivity.class)));
-        text("01   FILTRE ADULTE",13,MINT);text("Domaines pornographiques et hentai connus, complétés par le filtre familial CleanBrowsing.",16,INK);
+        text("01   FILTRE ADULTE",13,MINT);text("Domaines pornographiques et hentai connus, complétés par le filtre adulte CleanBrowsing.",16,INK);
         text("02   ZÉRO IMAGE PAR DÉFAUT",13,MINT);text("Le navigateur Serein désactive les images, vidéos, scripts et fenêtres externes. Les sites complexes peuvent moins bien fonctionner.",16,INK);
         button("Modifier ma liste noire",this::editDomains);
         button("Réglages VPN Android",()->{try{startActivity(new Intent(Settings.ACTION_VPN_SETTINGS));}catch(Exception e){startActivity(new Intent(Settings.ACTION_SETTINGS));}});
@@ -39,7 +39,7 @@ public class MainActivity extends Activity {
         text("Le VPN filtre les noms de domaine, pas le contenu de chaque image. Une photo suggestive sur un site autorisé, une image enregistrée ou une publication dans une autre app peut rester visible. Pour éviter leurs images, utilise le navigateur Serein ou évite ces applications.",14,0xffaab9c6);
         text("Le DNS sécurisé propre à un navigateur, les adresses IP directes et certains proxys peuvent contourner ce filtre. Désactive le DNS sécurisé personnalisé de tes autres navigateurs. Ce n’est pas un verrou inviolable.",14,0xffaab9c6);
         text("Sur certains téléphones TECNO, autorise Serein à fonctionner en arrière-plan. Vérifie l’état après un redémarrage : l’activation est manuelle. Ne coche pas « Bloquer les connexions sans VPN » : Serein ne transporte que le DNS.",14,0xffaab9c6);
-        text("Version 1.0 • Android 8+ • Sans compte ni publicité",12,0xff758b9d);
+        text("Version 1.0.1 • Android 8+ • Sans compte ni publicité",12,0xff758b9d);
     }
     void editDomains(){
         EditText input=new EditText(this);input.setTextColor(INK);input.setHint("exemple.com\nautresite.com");input.setHintTextColor(0xffaab9c6);input.setMinLines(5);input.setGravity(Gravity.TOP);input.setText(getSharedPreferences("serein",0).getString("domains",""));
@@ -48,7 +48,14 @@ public class MainActivity extends Activity {
             getSharedPreferences("serein",0).edit().putString("domains",clean.toString()).apply();Toast.makeText(this,"Liste enregistrée",Toast.LENGTH_SHORT).show();
         }).show();
     }
-    void renderStatus(){if(status==null)return;boolean on=ShieldService.running;status.setText(on?"Filtrage DNS actif":"Protection désactivée");status.setTextColor(on?MINT:INK);toggle.setText(on?"Désactiver la protection":"Activer la protection");detail.setText(!ShieldService.problem.isEmpty()?ShieldService.problem:on?"Filtre familial + liste noire • vérifie les limites ci-dessous":"Active le filtre, puis utilise le navigateur sans images.");}
+    void renderStatus(){
+        if(status==null)return;
+        boolean on=ShieldService.running, busy=ShieldService.starting;
+        status.setText(on?"Filtrage DNS actif":busy?"Vérification du filtre…":"Protection désactivée");
+        status.setTextColor(on?MINT:INK);
+        toggle.setText(on?"Désactiver la protection":busy?"Annuler l’activation":"Activer la protection");
+        detail.setText(!ShieldService.problem.isEmpty()?ShieldService.problem:on?"Filtre adulte + liste noire • connexion HTTPS":busy?"Test du serveur avant l’activation du VPN. Internet reste disponible.":"Active le filtre. Tu peux garder ton navigateur habituel.");
+    }
     void startShield(){try{startForegroundService(new Intent(this,ShieldService.class));}catch(Exception e){Toast.makeText(this,"Activation impossible : "+e.getMessage(),Toast.LENGTH_LONG).show();}}
     @Override protected void onActivityResult(int req,int result,Intent data){super.onActivityResult(req,result,data);if(req==7&&result==RESULT_OK)startShield();}
     @Override protected void onResume(){super.onResume();handler.post(refresh);}
