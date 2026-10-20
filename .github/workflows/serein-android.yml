@@ -1,0 +1,27 @@
+name: Serein Android
+on:
+  push:
+    branches: [serein-android]
+    paths: ['android/serein/**', '.github/workflows/serein-android.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Test DNS policy and packet codec
+        run: bash android/serein/run-tests.sh
+      - name: Build and verify signed local-test APK
+        run: bash android/serein/build-apk.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Serein-Android-APK
+          path: android/serein/app/build/manual/Serein-1.0.apk
