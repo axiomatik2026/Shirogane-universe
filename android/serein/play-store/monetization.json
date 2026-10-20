@@ -1,0 +1,16 @@
+{
+  "model": "paid_app_upfront",
+  "base_currency": "USD",
+  "requested_base_price": "2.00",
+  "subscriptions": false,
+  "in_app_purchases": false,
+  "advertising": false,
+  "status": "DRAFT_NOT_CONFIGURED_IN_PLAY_CONSOLE",
+  "notes": [
+    "Le paiement unique est configuré sur la fiche tarifaire Play Console, pas dans le code Android.",
+    "Le prix affiché et les taxes dépendent des règles locales Google Play.",
+    "Aucun abonnement ni SDK de paiement intégré à cette version.",
+    "L’achat unique ne constitue pas une garantie de disponibilité illimitée d’un service DNS tiers.",
+    "Le pays réel du profil marchand et l’éligibilité du compte doivent être confirmés avant toute vente."
+  ]
+}

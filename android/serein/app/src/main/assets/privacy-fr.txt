@@ -1,0 +1,39 @@
+CONFIDENTIALITÉ — SEREIN
+Notice fonctionnelle du 20 octobre 2026
+
+RECHERCHES ET ACCESSIBILITÉ
+
+Après ton accord et l’autorisation Android, le service d’accessibilité peut accéder au texte et à la structure accessibles de l’écran dans les applications choisies. Serein les utilise localement pour appliquer ta liste de mots : effacer un champ lorsque possible et revenir à l’accueil Android. Le mode strict optionnel étend cette analyse au texte visible. Les champs signalés comme mots de passe sont ignorés.
+
+Serein ne capture pas l’écran, ne conserve pas un historique des textes analysés et ne transmet pas ces textes au développeur ou au service DNS. L’autorisation peut être retirée dans les réglages Android.
+
+FILTRAGE DNS
+
+Le VPN local redirige uniquement les requêtes destinées à son résolveur virtuel. Le reste du trafic Internet n’est pas anonymisé ni envoyé à un serveur VPN Serein. Les requêtes DNS sont transférées par HTTPS au filtre adulte de CleanBrowsing : https://doh.cleanbrowsing.org/doh/adult-filter/.
+
+Ce service tiers reçoit les noms de domaine demandés et l’adresse IP de connexion. Sa politique de confidentialité est disponible sur https://cleanbrowsing.org/privacy. La protection locale des recherches ne dépend pas de ce service.
+
+NAVIGATION
+
+Le navigateur intégré contacte les sites HTTPS que tu choisis et le moteur de recherche utilisé. Ces sites reçoivent les requêtes normales, dont les termes d’une recherche Web, et l’adresse IP de connexion. Cela est distinct de l’analyse locale des textes d’écran par le service d’accessibilité.
+
+RÉGLAGES ET CONSERVATION
+
+Les listes de domaines, mots, applications et préférences d’activation sont enregistrées dans le stockage privé de Serein. Ils sont conservés jusqu’à modification, effacement des données de l’application ou désinstallation. La sauvegarde automatique Android des données de l’application est désactivée.
+
+COMPTE, PUBLICITÉ ET MESURE D’AUDIENCE
+
+Cette version ne demande pas de compte Serein et n’intègre ni publicité, ni SDK de mesure d’audience ou de suivi. Si elle est distribuée comme application payante, la transaction est gérée par la boutique et son opérateur selon leurs propres règles.
+
+ARRIÈRE-PLAN ET AUTORISATIONS
+
+La veille locale utilise une notification de service au premier plan. L’accès à l’état réseau sert au transport DNS. La réception des événements de démarrage permet de reprendre les fonctions précédemment autorisées selon les réglages. Serein ne lit pas tes contacts, SMS ou fichiers personnels et n’a pas de permission caméra ou microphone.
+
+TES CHOIX
+
+Tu peux modifier les listes, désactiver chaque protection, arrêter la veille, retirer l’accessibilité et l’autorisation VPN, effacer les données ou désinstaller l’application. Aucune fonction n’empêche ces choix.
+
+SUPPORT DU PROJET
+
+La documentation et le suivi technique de cette version candidate se trouvent dans le projet GitHub Serein : https://github.com/axiomatik2026/Shirogane-universe/tree/serein-android/android/serein.
+Ne joins pas de captures contenant des informations privées à un signalement public. Les coordonnées de l’éditeur de la future version boutique doivent être ajoutées avant sa publication.

@@ -1,0 +1,53 @@
+BIEN DÉMARRER AVEC SEREIN
+
+Serein combine deux protections indépendantes : un filtre de domaines adultes par VPN local et un filtre de mots dans les recherches des applications choisies. Tu peux activer l’une ou les deux.
+
+1 — ACTIVER LE FILTRE DES SITES
+
+Depuis l’accueil, appuie sur « Activer la protection ». Lis l’information sur CleanBrowsing, puis accepte la demande VPN Android. Attends l’état « Filtrage DNS actif ». Tu peux ensuite garder ton navigateur habituel. Une seule application VPN peut fonctionner à la fois.
+
+Si Internet devient inaccessible, désactive le filtre et vérifie ton réseau. Serein teste le serveur avant l’activation ; si la connexion au filtre tombe pendant l’utilisation, le VPN peut s’arrêter et annoncer que la protection est désactivée. La liste noire permet d’ajouter des domaines.
+
+2 — BLOQUER LES RECHERCHES DANS LES APPLICATIONS
+
+Ouvre « Configurer le blocage des recherches ». Choisis les applications à surveiller, puis active le blocage. Accepte l’information dédiée et active « Serein — blocage des recherches » dans les réglages d’accessibilité Android.
+
+Le service lit le texte accessible des champs de recherche des applications sélectionnées. Si un mot de ta liste est détecté, il tente d’effacer le champ puis revient à l’accueil Android. Les mots et applications sont modifiables. Les mots de passe signalés par Android sont ignorés.
+
+3 — AJUSTER LES MOTS ET LE MODE STRICT
+
+La liste contient notamment « ecchi », « hentai », « hot » et « nsfw ». Tu peux retirer un mot ou ajouter une expression, une par ligne. Les mots entiers sont comparés sans tenir compte des majuscules et des accents. « Hot » peut aussi bloquer une recherche innocente contenant ce mot.
+
+Si une application expose mal sa barre de recherche, le mode strict peut aider. Il étend la détection au texte visible dans les applications choisies, y compris les publications et suggestions ; il peut donc interrompre une navigation ordinaire. Certaines interfaces ne sont pas détectables, même dans ce mode.
+
+4 — GARDER LA PROTECTION EN ARRIÈRE-PLAN
+
+Laisse « Maintenir la protection en arrière-plan » activé et autorise les notifications. Dans « Régler la batterie / arrière-plan », autorise l’activité en arrière-plan ou le mode Sans restriction. Selon le téléphone, vérifie aussi le lancement automatique.
+
+Tu peux quitter Serein et retirer sa fenêtre des applications récentes. Android garde le contrôle de l’exécution. Après « Forcer l’arrêt », un arrêt depuis le gestionnaire Android, ou une restriction du constructeur, ouvre Serein pour vérifier et relancer la protection.
+
+5 — COMPRENDRE LE HORS CONNEXION
+
+La détection des mots est locale et ne nécessite pas Internet. Elle peut agir sur les champs et contenus déjà chargés. Le filtre DNS, utilisé pour ouvrir des sites en ligne, nécessite une connexion. Aucune nouvelle publication n’est téléchargée hors ligne par Serein.
+
+6 — FAIRE UN ESSAI SIMPLE
+
+Vérifie que Pinterest ou une autre application compatible est sélectionnée et que l’accessibilité est activée. Dans cette application, saisis un mot de ta liste : Serein doit détecter le texte et revenir à l’accueil. Essaie ensuite une recherche ordinaire, par exemple « paysage », qui ne figure pas dans ta liste.
+
+Tu peux utiliser le test local ci-dessous pour vérifier ta liste sans quitter Serein. Ce test confirme les règles, pas la compatibilité d’une autre application. Tu peux aussi vérifier le comportement après avoir fermé Serein et, sur un contenu déjà chargé, en mode avion.
+
+7 — SI ANDROID REFUSE UNE AUTORISATION
+
+Les réglages diffèrent selon les téléphones. Pour une installation hors boutique, Android peut demander d’autoriser les paramètres restreints depuis la fiche de Serein avant l’accessibilité. Lis les informations affichées et n’accorde cet accès qu’à une application de confiance. Serein ne peut pas activer lui-même ces autorisations.
+
+8 — LIMITES À CONNAÎTRE
+
+Serein ne reconnaît pas les images : une photo ou vidéo sans texte détectable peut rester visible. Le filtre DNS ne voit pas chaque publication des réseaux sociaux. Les listes ne couvrent pas tous les sites ni toutes les formulations. Les premiers résultats peuvent apparaître brièvement avant l’action de blocage. Les DNS personnalisés, IP directes, autres profils et modifications d’applications peuvent réduire l’efficacité.
+
+Le navigateur texte intégré retire les images, vidéos et scripts. Certains sites complexes ou nécessitant une connexion ne fonctionnent pas dans ce navigateur. Pour une navigation ordinaire, tu peux utiliser ton navigateur habituel avec le filtre DNS.
+
+9 — CONFIDENTIALITÉ ET CONTRÔLE
+
+Le filtre des recherches ne prend aucune capture d’écran et n’enregistre ni n’envoie le texte d’écran analysé. Tes listes et réglages sont enregistrés sur ton téléphone. Les requêtes DNS chiffrées sont envoyées au résolveur CleanBrowsing ; celui-ci reçoit les domaines demandés et l’adresse IP de connexion. Les sites et moteurs de recherche que tu visites reçoivent les requêtes habituelles de navigation.
+
+Tu peux désactiver séparément le VPN, le filtre des recherches et la veille. Tu peux retirer les autorisations Android ou désinstaller Serein à tout moment. Serein n’est ni un verrou inviolable, ni un traitement médical, ni une garantie de suppression de tout contenu sensible.

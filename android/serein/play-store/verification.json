@@ -1,0 +1,27 @@
+{
+  "candidate_version": "1.3.0-rc1",
+  "version_code": 5,
+  "min_sdk": 26,
+  "target_sdk": 36,
+  "bundletool_version": "1.18.2",
+  "signed_aab_validated": true,
+  "apk_rebuilt_from_bundle": true,
+  "dex_and_assets_match": true,
+  "same_signing_certificate_as_1_2_0": true,
+  "signing_certificate_sha256": "2bbcf1615d3f309a471a2bdaa03ff4a89374807cda4d3857d498dc1a882016d1",
+  "unit_assertions": 115,
+  "malformed_packet_inputs": 20000,
+  "device_ui_or_play_review_performed": false,
+  "play_console_uploaded": false,
+  "published": false,
+  "files": {
+    "Serein-1.3.0-rc1.apk": {
+      "size_bytes": 53946,
+      "sha256": "66eae42ed6da99d52d106eecf601ab75b856a81592f07da3a335951e21e828ad"
+    },
+    "Serein-1.3.0-rc1.aab": {
+      "size_bytes": 48064,
+      "sha256": "aba4255ca53eae47a30f21074f64b08428adeabce732ed99042dd19e31d55b90"
+    }
+  }
+}

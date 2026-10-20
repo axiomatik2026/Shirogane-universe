@@ -38,11 +38,12 @@ public class MainActivity extends Activity {
         button("Configurer le blocage des recherches",()->startActivity(new Intent(this,GuardSettingsActivity.class)));
         button("Modifier ma liste noire",this::editDomains);
         button("Réglages VPN Android",()->{try{startActivity(new Intent(Settings.ACTION_VPN_SETTINGS));}catch(Exception e){startActivity(new Intent(Settings.ACTION_SETTINGS));}});
+        button("Tutoriels, test local et confidentialité",()->startActivity(new Intent(this,HelpActivity.class)));
         text("Ce que Serein peut faire",20,INK);
         text("Le VPN filtre les noms de domaine, pas le contenu de chaque image. Une photo suggestive sur un site autorisé, une image enregistrée ou une publication dans une autre app peut rester visible. Pour éviter leurs images, utilise le navigateur Serein ou évite ces applications.",14,0xffaab9c6);
         text("Le DNS sécurisé propre à un navigateur, les adresses IP directes et certains proxys peuvent contourner ce filtre. Désactive le DNS sécurisé personnalisé de tes autres navigateurs. Ce n’est pas un verrou inviolable.",14,0xffaab9c6);
         text("Sur certains téléphones TECNO, autorise Serein à fonctionner en arrière-plan. Vérifie l’état après un redémarrage : la reprise du VPN doit être activée dans les réglages de protection. Ne coche pas « Bloquer les connexions sans VPN » : Serein ne transporte que le DNS.",14,0xffaab9c6);
-        text("Version 1.2.0 • Android 8+ • Sans compte ni publicité",12,0xff758b9d);
+        text("Version 1.3.0-rc1 • Android 8+ • Sans compte ni publicité",12,0xff758b9d);
     }
     void editDomains(){
         EditText input=new EditText(this);input.setTextColor(INK);input.setHint("exemple.com\nautresite.com");input.setHintTextColor(0xffaab9c6);input.setMinLines(5);input.setGravity(Gravity.TOP);input.setText(getSharedPreferences("serein",0).getString("domains",""));

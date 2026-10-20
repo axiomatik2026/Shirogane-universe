@@ -2,6 +2,8 @@
 
 Application Android en français pour réduire l’exposition aux contenus adultes.
 
+> Branche candidate Google Play : tutoriels intégrés, achat unique demandé de 2,00 USD, AAB 1.3.0-rc1 ciblant API 36. **Non téléversé et non publié.** Voir `play-store/RELEASE_CHECKLIST.md` pour les prérequis de compte marchand/organisation, fournisseur DNS et identité éditeur. La version personnelle stable est conservée sur la branche `serein-android`.
+
 ## Mise à jour 1.2.0 : protection locale hors connexion et arrière-plan
 
 Installer par-dessus 1.1.0 ou 1.0.1 : même clé de signature, versionCode 4. Ouvrir Serein une fois après la mise à jour. Dans les réglages de recherches, vérifier l’accessibilité, laisser **Maintenir la protection en arrière-plan** activé et autoriser les notifications.
@@ -89,7 +91,7 @@ L’activation est manuelle après un redémarrage. Certains téléphones, dont 
 
 ## Compiler
 
-JDK 17, Android SDK plateforme 35 et build-tools 35.0.0 ; outils `zip`, `sed`, `find`.
+JDK 17, Android SDK plateforme 36 et build-tools 36.0.0 ; outils `zip`, `sed`, `find`.
 
 ```sh
 export JAVA_HOME=/chemin/vers/jdk-17
@@ -117,3 +119,13 @@ La construction automatisée est décrite dans le workflow racine `.github/workf
 - Android foreground services : https://developer.android.com/develop/background-work/services/fgs/service-types
 - CleanBrowsing Family Filter : https://cleanbrowsing.org/filters/
 - CleanBrowsing paramètres réseau : https://cleanbrowsing.org/support/troubleshooting/firewall-dns-requirements
+
+## Construire le candidat Google Play
+
+```sh
+export BUNDLETOOL_JAR=/chemin/vers/bundletool-all-1.18.2.jar
+export SEREIN_KEYSTORE=/chemin/prive/vers/serein-local.jks
+bash build-bundle.sh
+```
+
+Sorties candidates : `app/build/manual/Serein-1.3.0-rc1.apk` et `app/build/bundle/Serein-1.3.0-rc1.aab`. Le script valide le bundle mais ne téléverse ni ne publie l’application et ne configure aucun prix dans Play Console. Ne jamais inclure la clé privée dans un dépôt public.
