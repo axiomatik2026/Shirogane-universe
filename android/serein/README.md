@@ -2,7 +2,32 @@
 
 Application Android en français pour réduire l’exposition aux contenus adultes.
 
-## Mise à jour 1.1.0 : recherches dans les applications
+## Mise à jour 1.2.0 : protection locale hors connexion et arrière-plan
+
+Installer par-dessus 1.1.0 ou 1.0.1 : même clé de signature, versionCode 4. Ouvrir Serein une fois après la mise à jour. Dans les réglages de recherches, vérifier l’accessibilité, laisser **Maintenir la protection en arrière-plan** activé et autoriser les notifications.
+
+La détection des mots reste **entièrement locale**, sans connexion réseau, requête DNS ni serveur. Elle peut donc agir en mode avion sur les champs et contenus déjà présents dans une application. Les publications qui ne sont pas chargées hors ligne ne sont évidemment pas téléchargées par Serein. Le filtre de sites par DNS est distinct et nécessite un réseau pour résoudre les domaines lorsque la navigation est en ligne.
+
+Une veille au premier plan accompagne désormais la protection de recherches, avec une notification indiquant l’état réel de connexion au service d’accessibilité. Elle tourne dans le même processus que le service local, sans requête réseau, minuterie périodique, verrou de veille ni son artificiel. L’activité Serein peut être quittée ou retirée des applications récentes. Le manifeste utilise `stopWithTask=false`, et la veille comme le VPN demandent une reprise Android via `START_STICKY` après une suppression de processus éligible. Les réglages de mots et d’applications sont restaurés depuis les préférences locales.
+
+La notification permet de revenir aux réglages ou de désactiver le blocage des recherches. Les choix de l’utilisateur sont respectés : pas de relance forcée après un arrêt explicite ou une révocation. Sans accès d’accessibilité, sans mot ou sans application sélectionnée, la veille ne prétend pas fournir une protection active.
+
+Un récepteur système traite le redémarrage et la fin d’une mise à jour. La veille locale est relancée si elle avait été activée et si Android confirme toujours l’autorisation d’accessibilité. La reprise du VPN au démarrage est **optionnelle et désactivée par défaut**, et exige une autorisation VPN déjà accordée ainsi qu’un état VPN précédemment activé. En cas d’erreur de réseau, le comportement de restauration de l’accès Internet introduit en 1.0.1 reste appliqué ; cela n’arrête pas la protection locale.
+
+### Réglages Android à effectuer sur l’appareil
+
+Dans Serein, ouvrir **Régler la batterie / arrière-plan**, puis choisir **Sans restriction / Autoriser l’activité en arrière-plan** dans les paramètres Android de l’application. Sur certains TECNO, il faut aussi vérifier le lancement automatique ou les restrictions Phone Master. L’app propose les écrans Android officiels ; elle ne modifie pas ces autorisations à la place de l’utilisateur.
+
+**Limites** : aucune application ne peut garantir de continuer après « Forcer l’arrêt », un arrêt demandé dans le gestionnaire Android, une désactivation de l’accessibilité ou un arrêt agressif du constructeur. Après de tels événements, ouvrir Serein pour vérifier et relancer la protection. La reprise après manque de mémoire ou redémarrage dépend des règles Android et du téléphone ; elle n’est pas une garantie d’exécution permanente.
+
+### Validation 1.2.0
+
+- 16 assertions de décisions de cycle de vie et de fonctionnement hors connexion, dont détection de mots avec une interdiction effective de toutes les connexions réseau dans le processus de test JVM.
+- 99 assertions existantes (30 DNS/politique, 23 HTTPS simulé, 46 règles de recherches) et 20 000 entrées aléatoires de parseurs.
+- Compilation Android et DEX, signature vérifiée et identique à 1.1.0.
+- Pas de test Android réel ou émulateur de fermeture, Doze, interruption du processus ou redémarrage effectué pendant cette mise à jour. Le test de connectivité interdite porte sur la logique locale, pas sur les callbacks du système Android.
+
+## Historique : mise à jour 1.1.0 : recherches dans les applications
 
 Installer cet APK **par-dessus Serein 1.0.1**, sans désinstaller : même signature, versionCode 3. Les utilisateurs de la première version 1.0 doivent toujours désinstaller celle-ci d’abord.
 
@@ -38,7 +63,7 @@ Le transport a été testé avec des connexions simulées ; l’environnement de
 
 ## Installer
 
-Télécharger `releases/Serein-1.1.0.apk`, ouvrir le fichier sur Android 8 ou plus récent et autoriser cette source si Android le demande. Dans Serein, activer la protection et accepter la demande VPN. Ouvrir ensuite le navigateur sans images.
+Télécharger `releases/Serein-1.2.0.apk`, ouvrir le fichier sur Android 8 ou plus récent et autoriser cette source si Android le demande. Dans Serein, activer la protection et accepter la demande VPN. Ouvrir ensuite le navigateur sans images.
 
 Cette version est signée avec une clé locale de test. Elle n'est pas distribuée par Google Play. Une compilation GitHub Actions utilise une autre clé : une installation issue d'une autre clé demande de désinstaller l'ancienne app, ce qui efface les réglages. Conserver sa clé locale hors du dépôt pour créer des mises à jour compatibles.
 
@@ -73,7 +98,7 @@ bash run-tests.sh
 bash build-apk.sh
 ```
 
-Sortie : `app/build/manual/Serein-1.1.0.apk`. La clé est créée dans `app/build/serein-local.jks` (exclue de Git). Le script utilise les outils Android officiels et les modules javac/jar du JDK sans dépendances Maven. Le projet inclut également des fichiers Gradle pour Android Studio.
+Sortie : `app/build/manual/Serein-1.2.0.apk`. La clé est créée dans `app/build/serein-local.jks` (exclue de Git). Le script utilise les outils Android officiels et les modules javac/jar du JDK sans dépendances Maven. Le projet inclut également des fichiers Gradle pour Android Studio.
 
 La construction automatisée est décrite dans le workflow racine `.github/workflows/serein-android.yml`. Le binaire livré a été construit localement ; une exécution CI n'est pas nécessaire pour le télécharger.
 

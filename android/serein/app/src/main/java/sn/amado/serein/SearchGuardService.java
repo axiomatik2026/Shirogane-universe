@@ -20,7 +20,7 @@ public class SearchGuardService extends AccessibilityService implements SharedPr
     @Override public void onServiceConnected(){
         prefs=getSharedPreferences("serein",0);prefs.registerOnSharedPreferenceChangeListener(this);
         policy=new SearchPolicy(prefs.getString("search_terms",SearchPolicy.DEFAULT_TERMS));
-        connected=true;configure();
+        connected=true;configure();GuardRuntimeService.ensure(this);
     }
     private boolean enabled(){return prefs!=null && prefs.getBoolean("search_guard",false);}
     private Set<String> apps(){return new HashSet<>(prefs.getStringSet("search_apps",SearchPolicy.DEFAULT_APPS));}
@@ -38,6 +38,7 @@ public class SearchGuardService extends AccessibilityService implements SharedPr
     @Override public void onSharedPreferenceChanged(SharedPreferences p,String key){
         if("search_terms".equals(key))policy=new SearchPolicy(prefs.getString("search_terms",SearchPolicy.DEFAULT_TERMS));
         if("search_guard".equals(key)||"search_apps".equals(key))configure();
+        if("search_guard".equals(key)||"search_apps".equals(key)||"search_terms".equals(key)||"guard_background".equals(key))GuardRuntimeService.ensure(this);
     }
     @Override public void onAccessibilityEvent(AccessibilityEvent event){
         if(!enabled() || event==null || event.isPassword())return;
@@ -103,7 +104,7 @@ public class SearchGuardService extends AccessibilityService implements SharedPr
             // SearchView containers often hold an EditText without its own hint/ID.
             if(parent!=null){
                 String clazz=str(parent.getClassName());
-                return (node.isEditable()||"android.widget.TextView".contentEquals(node.getClassName())) &&
+                return (node.isEditable()||"android.widget.TextView".equals(str(node.getClassName()))) &&
                     (clazz.contains("SearchView")||SearchPolicy.searchMetadata(parent.getViewIdResourceName(),str(parent.getHintText()),str(parent.getContentDescription())));
             }
         }finally{if(parent!=null)parent.recycle();}
@@ -112,7 +113,7 @@ public class SearchGuardService extends AccessibilityService implements SharedPr
     private static String str(CharSequence c){return c==null?"":c.toString();}
     @Override public void onInterrupt(){handler.removeCallbacks(inspect);}
     @Override public void onDestroy(){
-        connected=false;handler.removeCallbacksAndMessages(null);
+        connected=false;handler.removeCallbacksAndMessages(null);GuardRuntimeService.refresh(this);
         if(prefs!=null)prefs.unregisterOnSharedPreferenceChangeListener(this);super.onDestroy();
     }
 }

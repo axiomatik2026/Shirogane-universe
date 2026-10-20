@@ -4,6 +4,7 @@
  <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
  <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+ <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
  <queries><intent><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent></queries>
  <application android:label="Serein" android:icon="@drawable/shield" android:theme="@android:style/Theme.Material.NoActionBar" android:allowBackup="false" android:usesCleartextTraffic="false" android:supportsRtl="true">
   <activity android:name=".GuardSettingsActivity" android:exported="true"/>
@@ -11,14 +12,20 @@
   <activity android:name=".MainActivity" android:exported="true">
    <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
   </activity>
-  <service android:name=".ShieldService" android:permission="android.permission.BIND_VPN_SERVICE" android:exported="false" android:foregroundServiceType="specialUse">
+  <service android:stopWithTask="false" android:name=".ShieldService" android:permission="android.permission.BIND_VPN_SERVICE" android:exported="false" android:foregroundServiceType="specialUse">
    <intent-filter><action android:name="android.net.VpnService"/></intent-filter>
    <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE" android:value="User activated local DNS filtering VPN"/>
    <meta-data android:name="android.net.VpnService.SUPPORTS_ALWAYS_ON" android:value="false"/>
   </service>
-  <service android:name=".SearchGuardService" android:label="Serein — blocage des recherches" android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" android:exported="true">
+  <service android:stopWithTask="false" android:name=".SearchGuardService" android:label="Serein — blocage des recherches" android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" android:exported="true">
    <intent-filter><action android:name="android.accessibilityservice.AccessibilityService"/></intent-filter>
    <meta-data android:name="android.accessibilityservice" android:resource="@xml/search_guard"/>
   </service>
+  <service android:name=".GuardRuntimeService" android:exported="false" android:stopWithTask="false" android:foregroundServiceType="specialUse">
+   <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE" android:value="User-enabled local keyword protection in selected applications, independent of activity and network"/>
+  </service>
+  <receiver android:name=".BootReceiver" android:enabled="true" android:exported="false">
+   <intent-filter><action android:name="android.intent.action.BOOT_COMPLETED"/><action android:name="android.intent.action.MY_PACKAGE_REPLACED"/></intent-filter>
+  </receiver>
  </application>
 </manifest>

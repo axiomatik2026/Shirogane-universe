@@ -24,7 +24,7 @@ public class MainActivity extends Activity {
         text("Moins de tentations. Une navigation choisie.",16,0xff9aafbf);
         status=text("Protection désactivée",24,INK);detail=text("",14,0xff9aafbf);
         toggle=button("Activer la protection",()->{
-            if(ShieldService.running || ShieldService.starting){stopService(new Intent(this,ShieldService.class));return;}
+            if(ShieldService.running || ShieldService.starting){getSharedPreferences("serein",0).edit().putBoolean("vpn_enabled",false).apply();stopService(new Intent(this,ShieldService.class));return;}
             new AlertDialog.Builder(this).setTitle("Activer le filtre DNS ?").setMessage("Serein utilise le créneau VPN Android pour filtrer les domaines. Les requêtes DNS sont chiffrées via HTTPS et envoyées au filtre adulte CleanBrowsing. Si ce serveur devient inaccessible, le VPN sera arrêté et une alerte indiquera que la protection est désactivée. Serein ne stocke pas ton historique. Un autre VPN ne peut pas fonctionner en même temps. Le filtre ne reconnaît pas les photos dans les réseaux sociaux.").setNegativeButton("Annuler",null).setPositiveButton("Activer",(d,w)->{
                 if(Build.VERSION.SDK_INT>=33 && checkSelfPermission("android.permission.POST_NOTIFICATIONS")!=0) requestPermissions(new String[]{"android.permission.POST_NOTIFICATIONS"},8);
                 Intent consent=android.net.VpnService.prepare(this);if(consent!=null)startActivityForResult(consent,7);else startShield();
@@ -41,8 +41,8 @@ public class MainActivity extends Activity {
         text("Ce que Serein peut faire",20,INK);
         text("Le VPN filtre les noms de domaine, pas le contenu de chaque image. Une photo suggestive sur un site autorisé, une image enregistrée ou une publication dans une autre app peut rester visible. Pour éviter leurs images, utilise le navigateur Serein ou évite ces applications.",14,0xffaab9c6);
         text("Le DNS sécurisé propre à un navigateur, les adresses IP directes et certains proxys peuvent contourner ce filtre. Désactive le DNS sécurisé personnalisé de tes autres navigateurs. Ce n’est pas un verrou inviolable.",14,0xffaab9c6);
-        text("Sur certains téléphones TECNO, autorise Serein à fonctionner en arrière-plan. Vérifie l’état après un redémarrage : l’activation est manuelle. Ne coche pas « Bloquer les connexions sans VPN » : Serein ne transporte que le DNS.",14,0xffaab9c6);
-        text("Version 1.1.0 • Android 8+ • Sans compte ni publicité",12,0xff758b9d);
+        text("Sur certains téléphones TECNO, autorise Serein à fonctionner en arrière-plan. Vérifie l’état après un redémarrage : la reprise du VPN doit être activée dans les réglages de protection. Ne coche pas « Bloquer les connexions sans VPN » : Serein ne transporte que le DNS.",14,0xffaab9c6);
+        text("Version 1.2.0 • Android 8+ • Sans compte ni publicité",12,0xff758b9d);
     }
     void editDomains(){
         EditText input=new EditText(this);input.setTextColor(INK);input.setHint("exemple.com\nautresite.com");input.setHintTextColor(0xffaab9c6);input.setMinLines(5);input.setGravity(Gravity.TOP);input.setText(getSharedPreferences("serein",0).getString("domains",""));
@@ -61,6 +61,6 @@ public class MainActivity extends Activity {
     }
     void startShield(){try{startForegroundService(new Intent(this,ShieldService.class));}catch(Exception e){Toast.makeText(this,"Activation impossible : "+e.getMessage(),Toast.LENGTH_LONG).show();}}
     @Override protected void onActivityResult(int req,int result,Intent data){super.onActivityResult(req,result,data);if(req==7&&result==RESULT_OK)startShield();}
-    @Override protected void onResume(){super.onResume();handler.post(refresh);}
+    @Override protected void onResume(){super.onResume();GuardRuntimeService.ensure(this);handler.post(refresh);}
     @Override protected void onPause(){handler.removeCallbacks(refresh);super.onPause();}
 }

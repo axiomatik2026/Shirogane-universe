@@ -23,8 +23,10 @@ public class ShieldService extends VpnService {
     private volatile boolean closing=false;
     private final Object lifecycle=new Object();
     @Override public int onStartCommand(Intent intent,int flags,int startId) {
-        if(intent!=null && "STOP".equals(intent.getAction())){stopSelf();return START_NOT_STICKY;}
-        if(running || starting)return START_NOT_STICKY;
+        if(intent!=null && "STOP".equals(intent.getAction())){getSharedPreferences("serein",0).edit().putBoolean("vpn_enabled",false).apply();stopSelf();return START_NOT_STICKY;}
+        if(intent==null && !getSharedPreferences("serein",0).getBoolean("vpn_enabled",false)){stopSelf();return START_NOT_STICKY;}
+        getSharedPreferences("serein",0).edit().putBoolean("vpn_enabled",true).apply();
+        if(running || starting)return START_STICKY;
         problem="";closing=false;starting=true;failures.set(0);
         NotificationManager nm=getSystemService(NotificationManager.class);
         nm.createNotificationChannel(new NotificationChannel("shield","Protection Serein",NotificationManager.IMPORTANCE_LOW));
@@ -52,7 +54,7 @@ public class ShieldService extends VpnService {
             }catch(Exception e){ if(!closing)haltWithWarning("Filtre inaccessible : protection désactivée. Internet reste disponible sans filtre. Réessaie sur un autre réseau."); }
             finally{starting=false;}
         },"serein-preflight");
-        startup.start();return START_NOT_STICKY;
+        startup.start();return START_STICKY;
     }
     private Notification notification(String title,String body,String channel){
         PendingIntent open=PendingIntent.getActivity(this,0,new Intent(this,MainActivity.class),PendingIntent.FLAG_IMMUTABLE);
@@ -82,7 +84,7 @@ public class ShieldService extends VpnService {
     private void haltWithWarning(String message){
         synchronized(lifecycle){
             if(closing)return;
-            problem=message;closing=true;running=false;starting=false;
+            problem=message;closing=true;running=false;starting=false;getSharedPreferences("serein",0).edit().putBoolean("vpn_enabled",false).apply();
             try{if(tun!=null)tun.close();}catch(Exception ignored){}
         }
         getSystemService(NotificationManager.class).notify(2,notification("Serein • protection désactivée",message,"errors"));stopSelf();
@@ -115,7 +117,7 @@ public class ShieldService extends VpnService {
         if(closing)return;
         try{synchronized(this){if(output!=null)output.write(DnsPacket.reply(p,off,r));}}catch(Exception ignored){}
     }
-    @Override public void onRevoke(){problem="Autorisation VPN retirée ou autre VPN activé.";stopSelf();}
+    @Override public void onRevoke(){getSharedPreferences("serein",0).edit().putBoolean("vpn_enabled",false).apply();problem="Autorisation VPN retirée ou autre VPN activé.";stopSelf();}
     @Override public void onDestroy(){
         synchronized(lifecycle){closing=true;running=false;starting=false;try{if(tun!=null)tun.close();}catch(Exception ignored){}}
         if(workers!=null)workers.shutdownNow();
