@@ -2,7 +2,33 @@
 
 Application Android en français pour réduire l’exposition aux contenus adultes.
 
-## Correctif 1.0.1
+## Mise à jour 1.1.0 : recherches dans les applications
+
+Installer cet APK **par-dessus Serein 1.0.1**, sans désinstaller : même signature, versionCode 3. Les utilisateurs de la première version 1.0 doivent toujours désinstaller celle-ci d’abord.
+
+Dans Serein, ouvrir **Configurer le blocage des recherches**, choisir les applications, accepter l’information dédiée, puis activer **Serein — blocage des recherches** dans les réglages d’accessibilité Android. La protection DNS et la protection de recherches ont des activations séparées. Le service ne s’active pas automatiquement lors de la mise à jour.
+
+Cette fonction utilise `AccessibilityService` et uniquement les événements des applications sélectionnées. Elle analyse localement le texte des champs de recherche identifiables. Un en-tête de recherche réduit de Pinterest peut aussi être détecté par sa position dans le quart supérieur de l’écran ; ce repli peut aussi détecter un titre de publication sensible situé dans cette zone. Si un mot bloqué est détecté, le service tente d’effacer le champ éditable puis revient à l’accueil Android. Si l’action Accueil échoue, il avertit l’utilisateur et tente de ramener Serein au premier plan.
+
+La liste initiale contient notamment ecchi, hentai, hot, hot classic, sexy, nsfw et nude. Elle est modifiable. Les mots entiers et expressions sont comparés sans tenir compte des majuscules, accents, caractères de largeur différente ou certains caractères invisibles. Les variantes d’un mot, autres langues et formulations détournées ne sont pas toutes couvertes. Le mot « hot » peut aussi bloquer une recherche innocente qui contient ce mot.
+
+Le **mode strict**, optionnel et accompagné d’une confirmation, étend l’analyse au texte visible dans les applications choisies, y compris publications, descriptions et suggestions. Il peut donc fermer une application sur un mot présent dans une publication ordinaire. Sans ce mode, les champs non identifiés comme recherche sont ignorés, sauf le repli Pinterest décrit plus haut.
+
+**Limites** : aucune reconnaissance ou suppression individuelle des images ; un contenu sans texte détectable peut rester visible. Les premiers résultats peuvent brièvement apparaître avant l’action de retour à l’accueil. Les applications qui ne rendent pas leurs champs accessibles peuvent ne pas être filtrées. Une mise à jour d’une application peut modifier ses identifiants et casser la détection. Le service peut être désactivé par Android ou l’utilisateur. Les clones d’applications et autres profils Android peuvent nécessiter leur propre installation/activation. L’état réel doit être confirmé sur chaque téléphone.
+
+**Confidentialité** : le service dispose techniquement d’un accès au contenu textuel accessible de l’écran dans les applications sélectionnées. Il ne prend aucune capture d’écran, ne transmet ni ne conserve les recherches ou textes d’écran, et ignore les champs marqués mot de passe par Android. Seuls les réglages (liste de mots et applications, activation) sont sauvegardés. La fonctionnalité est déclarée comme n’étant pas un outil destiné au handicap (`isAccessibilityTool=false`) ; elle reste sous le contrôle explicite de l’utilisateur. Le DNS, séparément, conserve son usage déclaré de CleanBrowsing.
+
+Android peut demander d’abord **Autoriser les paramètres restreints** dans la fiche de l’application installée hors boutique, avant d’autoriser l’accessibilité. Cette autorisation doit être accordée manuellement par l’utilisateur. Serein ne contourne pas ce réglage.
+
+### Validation 1.1.0
+
+- Compilation Android, génération DEX et vérification de signature de l’APK.
+- Même certificat que l’APK 1.0.1 remis précédemment.
+- 46 assertions sur les recherches sensibles/ordinaires, limites de mots, normalisation Unicode, mots personnalisés et exclusions des mots de passe, textes invisibles et champs ordinaires.
+- 30 assertions DNS/politique de navigation et 23 assertions de transport HTTPS, plus 20 000 entrées aléatoires dans les parseurs.
+- Pas de test d’intégration effectué dans les applications Pinterest/Instagram/YouTube réelles ni sur téléphone/émulateur. Les tests de règles ne prouvent pas que les champs d’une version donnée d’une application seront exposés à Android.
+
+## Historique : correctif 1.0.1
 
 La première version utilisait exclusivement le port DNS 853 et un filtre familial qui peut aussi bloquer des sites généralistes. Cette version utilise HTTPS sur le port 443 et le filtre adulte, qui laisse passer les domaines mixtes comme Reddit. Les URL ne sont plus bloquées pour un mot adulte inclus dans un mot ordinaire, par exemple « Pornic ».
 
@@ -12,7 +38,7 @@ Le transport a été testé avec des connexions simulées ; l’environnement de
 
 ## Installer
 
-Télécharger `releases/Serein-1.0.1.apk`, ouvrir le fichier sur Android 8 ou plus récent et autoriser cette source si Android le demande. Dans Serein, activer la protection et accepter la demande VPN. Ouvrir ensuite le navigateur sans images.
+Télécharger `releases/Serein-1.1.0.apk`, ouvrir le fichier sur Android 8 ou plus récent et autoriser cette source si Android le demande. Dans Serein, activer la protection et accepter la demande VPN. Ouvrir ensuite le navigateur sans images.
 
 Cette version est signée avec une clé locale de test. Elle n'est pas distribuée par Google Play. Une compilation GitHub Actions utilise une autre clé : une installation issue d'une autre clé demande de désinstaller l'ancienne app, ce qui efface les réglages. Conserver sa clé locale hors du dépôt pour créer des mises à jour compatibles.
 
@@ -47,7 +73,7 @@ bash run-tests.sh
 bash build-apk.sh
 ```
 
-Sortie : `app/build/manual/Serein-1.0.1.apk`. La clé est créée dans `app/build/serein-local.jks` (exclue de Git). Le script utilise les outils Android officiels et les modules javac/jar du JDK sans dépendances Maven. Le projet inclut également des fichiers Gradle pour Android Studio.
+Sortie : `app/build/manual/Serein-1.1.0.apk`. La clé est créée dans `app/build/serein-local.jks` (exclue de Git). Le script utilise les outils Android officiels et les modules javac/jar du JDK sans dépendances Maven. Le projet inclut également des fichiers Gradle pour Android Studio.
 
 La construction automatisée est décrite dans le workflow racine `.github/workflows/serein-android.yml`. Le binaire livré a été construit localement ; une exécution CI n'est pas nécessaire pour le télécharger.
 

@@ -8,6 +8,7 @@ import java.util.*;
 
 /** Pure policy shared by the VPN and the restricted browser. No browsing logs. */
 public final class Policy {
+    private static final SearchPolicy SEARCH=new SearchPolicy(SearchPolicy.DEFAULT_TERMS);
     private static final Set<String> BASE = new HashSet<>(Arrays.asList(
         "pornhub.com","xvideos.com","xnxx.com","xhamster.com","youporn.com",
         "redtube.com","spankbang.com","porn.com","rule34.xxx","rule34.paheal.net",
@@ -41,9 +42,7 @@ public final class Policy {
             if(!"https".equalsIgnoreCase(u.getScheme()) || u.getUserInfo()!=null || blocked(u.getHost(),custom)) return false;
             String content=(u.getRawPath()==null?"":u.getRawPath())+" "+(u.getRawQuery()==null?"":u.getRawQuery());
             content=URLDecoder.decode(content,StandardCharsets.UTF_8.name());
-            // Whole tokens avoid false positives such as the town Pornic or a
-            // technical path containing an adult keyword as part of another word.
-            if(java.util.regex.Pattern.compile("(?iu)(?<![\\p{L}\\p{N}])(?:porn|porno|hentai|nsfw|nudes?|xxx|rule34|sextape|sexy|erotique|érotique)(?![\\p{L}\\p{N}])").matcher(content).find())return false;
+            if(SEARCH.blocked(content))return false;
             return true;
         } catch(Exception e) { return false; }
     }
