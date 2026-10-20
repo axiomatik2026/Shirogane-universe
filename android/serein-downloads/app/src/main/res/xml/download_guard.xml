@@ -1,0 +1,11 @@
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+ android:description="@string/access_description"
+ android:accessibilityEventTypes="typeWindowStateChanged|typeWindowContentChanged|typeViewScrolled|typeViewTextChanged|typeViewClicked|typeWindowsChanged"
+ android:accessibilityFeedbackType="feedbackGeneric"
+ android:accessibilityFlags="flagReportViewIds|flagRetrieveInteractiveWindows"
+ android:notificationTimeout="50"
+ android:canRetrieveWindowContent="true"
+ android:canPerformGestures="false"
+ android:canTakeScreenshot="false"
+ android:isAccessibilityTool="false"
+ android:settingsActivity="sn.amado.downloadguard.MainActivity" />
