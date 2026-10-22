@@ -10,17 +10,20 @@ import java.util.*;
 /** User-enabled search guard; text is processed transiently on the device. */
 public class SearchGuardService extends AccessibilityService implements SharedPreferences.OnSharedPreferenceChangeListener {
     public static volatile boolean connected=false;
+    public static volatile long events=0,scans=0,blocks=0,lastEvent=0;
+    public static volatile String lastError="";
+    private final ScanGate gate=new ScanGate();
     private SharedPreferences prefs;
     private SearchPolicy policy;
     private final Handler handler=new Handler();
     private long lastBlock=0;
     private String pendingPackage="";
     private boolean scanning=false;
-    private final Runnable inspect=()->{if(!scanning)inspectWindow(pendingPackage);};
+    private final Runnable inspect=()->{gate.consumed();if(!scanning)inspectWindow(pendingPackage);};
     @Override public void onServiceConnected(){
         prefs=getSharedPreferences("serein",0);prefs.registerOnSharedPreferenceChangeListener(this);
         policy=new SearchPolicy(prefs.getString("search_terms",SearchPolicy.DEFAULT_TERMS));
-        connected=true;configure();GuardRuntimeService.ensure(this);
+        connected=true;lastError="";configure();GuardRuntimeService.ensure(this);
     }
     private boolean enabled(){return prefs!=null && prefs.getBoolean("search_guard",false);}
     private Set<String> apps(){return new HashSet<>(prefs.getStringSet("search_apps",SearchPolicy.DEFAULT_APPS));}
@@ -32,7 +35,7 @@ public class SearchGuardService extends AccessibilityService implements SharedPr
         info.eventTypes=AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED|AccessibilityEvent.TYPE_VIEW_FOCUSED|
             AccessibilityEvent.TYPE_VIEW_CLICKED|AccessibilityEvent.TYPE_VIEW_SCROLLED|
             AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED|AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED;
-        info.flags|=AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS;
+        info.flags|=AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS|AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS;
         info.notificationTimeout=80;setServiceInfo(info);
     }
     @Override public void onSharedPreferenceChanged(SharedPreferences p,String key){
@@ -44,18 +47,18 @@ public class SearchGuardService extends AccessibilityService implements SharedPr
         if(!enabled() || event==null || event.isPassword())return;
         String pkg=event.getPackageName()==null?"":event.getPackageName().toString();
         if(pkg.equals(getPackageName()) || !apps().contains(pkg))return;
-        pendingPackage=pkg;
+        events++;lastEvent=SystemClock.elapsedRealtime();pendingPackage=pkg;
         // Inspect immediately when editing; debounce busy content/scroll events.
         if(event.getEventType()==AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED){inspectWindow(pkg);}
-        handler.removeCallbacks(inspect);handler.postDelayed(inspect,120);
+        if(gate.enqueue())handler.postDelayed(inspect,120);
     }
     private void inspectWindow(String pkg){
         if(!enabled() || scanning || SystemClock.uptimeMillis()-lastBlock<1500)return;
-        AccessibilityNodeInfo root=getRootInActiveWindow();
+        AccessibilityNodeInfo root=findApplicationRoot(pkg);
         if(root==null)return;
         try{
             if(root.getPackageName()==null || !pkg.contentEquals(root.getPackageName()) || !apps().contains(pkg))return;
-            scanning=true;
+            scanning=true;scans++;
             boolean strict=prefs.getBoolean("search_strict",false);
             ArrayDeque<AccessibilityNodeInfo> nodes=new ArrayDeque<>();nodes.add(AccessibilityNodeInfo.obtain(root));
             int examined=0;
@@ -78,7 +81,7 @@ public class SearchGuardService extends AccessibilityService implements SharedPr
                         boolean blockedLink=Policy.addressMetadata(node.getViewIdResourceName(),str(node.getHintText()),str(node.getContentDescription())) &&
                             Policy.blockedAddress(text,prefs.getString("domains",""));
                         if(blockedLink||policy.shouldBlock(text,false,true,search,strict)){
-                            lastBlock=SystemClock.uptimeMillis();
+                            blocks++;lastBlock=SystemClock.uptimeMillis();
                             if(node.isEditable()){
                                 Bundle args=new Bundle();args.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE,"");
                                 node.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT,args);
@@ -96,8 +99,25 @@ public class SearchGuardService extends AccessibilityService implements SharedPr
                 }
             }finally{while(!nodes.isEmpty())nodes.removeFirst().recycle();}
         }catch(RuntimeException ignored){
+            lastError=ignored.getClass().getSimpleName();
             // Nodes can disappear during navigation; fail safely without closing normal apps.
         }finally{scanning=false;root.recycle();}
+    }
+    private AccessibilityNodeInfo findApplicationRoot(String pkg){
+        try{
+        AccessibilityNodeInfo root=getRootInActiveWindow();
+        if(root!=null&&(root.getPackageName()==null||!pkg.contentEquals(root.getPackageName()))){root.recycle();root=null;}
+        if(root==null){
+            List<AccessibilityWindowInfo> windows=getWindows();
+            try{for(AccessibilityWindowInfo window:windows){
+                if(window.getType()!=AccessibilityWindowInfo.TYPE_APPLICATION)continue;
+                AccessibilityNodeInfo candidate=window.getRoot();
+                if(candidate==null)continue;
+                if(candidate.getPackageName()!=null&&pkg.contentEquals(candidate.getPackageName())){root=candidate;break;}else candidate.recycle();
+            }}finally{for(AccessibilityWindowInfo window:windows)window.recycle();}
+        }
+        return root;
+        }catch(RuntimeException e){lastError=e.getClass().getSimpleName();return null;}
     }
     private boolean searchNode(AccessibilityNodeInfo node){
         if(SearchPolicy.searchMetadata(node.getViewIdResourceName(),str(node.getHintText()),str(node.getContentDescription())))return true;
@@ -113,9 +133,9 @@ public class SearchGuardService extends AccessibilityService implements SharedPr
         return false;
     }
     private static String str(CharSequence c){return c==null?"":c.toString();}
-    @Override public void onInterrupt(){handler.removeCallbacks(inspect);}
+    @Override public void onInterrupt(){handler.removeCallbacks(inspect);gate.consumed();}
     @Override public void onDestroy(){
-        connected=false;handler.removeCallbacksAndMessages(null);GuardRuntimeService.refresh(this);
+        connected=false;gate.consumed();handler.removeCallbacksAndMessages(null);GuardRuntimeService.refresh(this);
         if(prefs!=null)prefs.unregisterOnSharedPreferenceChangeListener(this);super.onDestroy();
     }
 }

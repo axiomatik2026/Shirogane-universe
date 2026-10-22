@@ -30,6 +30,7 @@ public class MainActivity extends Activity {
                 Intent consent=android.net.VpnService.prepare(this);if(consent!=null)startActivityForResult(consent,7);else startShield();
             }).show();
         });
+        button("Vérifier / relancer les protections",()->startActivity(new Intent(this,ProtectionActivity.class)));
         text("01   FILTRE ADULTE",13,MINT);text("Domaines pornographiques et hentai connus, complétés par le filtre adulte CleanBrowsing.",16,INK);
         text("02   RECHERCHES DANS LES APPLICATIONS",13,MINT);
         text("Bloque les mots sensibles dans les recherches accessibles de Pinterest et des applications choisies. L’accès d’accessibilité doit être activé séparément.",15,INK);
@@ -41,7 +42,7 @@ public class MainActivity extends Activity {
         text("Le VPN filtre les noms de domaine, pas le contenu de chaque image. Une photo suggestive sur un site autorisé, une image enregistrée ou une publication dans une autre app peut rester visible. La liste noire bloque des domaines entiers, pas des pages précises.",14,0xffaab9c6);
         text("Le DNS sécurisé propre à un navigateur, les adresses IP directes et certains proxys peuvent contourner ce filtre. Désactive le DNS sécurisé personnalisé de tes autres navigateurs. Ce n’est pas un verrou inviolable.",14,0xffaab9c6);
         text("Sur certains téléphones TECNO, autorise Serein à fonctionner en arrière-plan. Vérifie l’état après un redémarrage : la reprise du VPN doit être activée dans les réglages de protection. Ne coche pas « Bloquer les connexions sans VPN » : Serein ne transporte que le DNS.",14,0xffaab9c6);
-        text("Version 1.3.0 • Android 8+ • Sans compte ni publicité",12,0xff758b9d);
+        text("Version 1.3.1 • Android 8+ • Sans compte ni publicité",12,0xff758b9d);
     }
     void editDomains(){
         EditText input=new EditText(this);input.setTextColor(INK);input.setHint("exemple.com\nautresite.com");input.setHintTextColor(0xffaab9c6);input.setMinLines(5);input.setGravity(Gravity.TOP);input.setText(getSharedPreferences("serein",0).getString("domains",""));
@@ -58,9 +59,12 @@ public class MainActivity extends Activity {
         status.setTextColor(on?MINT:INK);
         toggle.setText(on?"Désactiver la protection":busy?"Annuler l’activation":"Activer la protection");
         detail.setText(!ShieldService.problem.isEmpty()?ShieldService.problem:on?(ShieldService.remoteReady?"Filtre adulte + liste noire • connexion HTTPS":"Liste noire locale active • filtre distant en attente. Sans serveur joignable, les nouveaux sites autorisés attendent."):busy?"Activation de la liste locale, sans attendre Internet.":"Active le filtre. Tu peux garder ton navigateur habituel.");
+        boolean local=getSharedPreferences("serein",0).getBoolean("search_guard",false);
+        detail.append("\nMots / liens accessibles : "+(!local?"désactivés":SearchGuardService.connected?"service connecté":"service non connecté — ouvrir Vérifier / relancer"));
+
     }
     void startShield(){try{startForegroundService(new Intent(this,ShieldService.class));}catch(Exception e){Toast.makeText(this,"Activation impossible : "+e.getMessage(),Toast.LENGTH_LONG).show();}}
     @Override protected void onActivityResult(int req,int result,Intent data){super.onActivityResult(req,result,data);if(req==7&&result==RESULT_OK)startShield();}
-    @Override protected void onResume(){super.onResume();GuardRuntimeService.ensure(this);handler.post(refresh);}
+    @Override protected void onResume(){super.onResume();GuardRuntimeService.ensure(this);if(getSharedPreferences("serein",0).getBoolean("vpn_enabled",false)&&!ShieldService.running&&!ShieldService.starting&&android.net.VpnService.prepare(this)==null)startShield();handler.post(refresh);}
     @Override protected void onPause(){handler.removeCallbacks(refresh);super.onPause();}
 }

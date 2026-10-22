@@ -2,7 +2,7 @@
  android:description="@string/search_guard_description"
  android:accessibilityEventTypes="typeViewTextChanged|typeViewFocused|typeViewClicked|typeViewScrolled|typeWindowStateChanged|typeWindowContentChanged"
  android:accessibilityFeedbackType="feedbackGeneric"
- android:accessibilityFlags="flagReportViewIds"
+ android:accessibilityFlags="flagReportViewIds|flagRetrieveInteractiveWindows"
  android:notificationTimeout="80"
  android:canRetrieveWindowContent="true"
  android:canPerformGestures="false"

@@ -24,4 +24,4 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: Serein-Android-APK
-          path: android/serein/app/build/manual/Serein-1.3.0.apk
+          path: android/serein/app/build/manual/Serein-1.3.1.apk

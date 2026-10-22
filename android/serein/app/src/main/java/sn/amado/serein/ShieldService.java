@@ -7,12 +7,15 @@ import android.os.*;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.net.ssl.HttpsURLConnection;
 
 public class ShieldService extends VpnService {
     public static volatile boolean running=false, starting=false;
     public static volatile String problem="";
+    public static final AtomicLong requests=new AtomicLong(),blocked=new AtomicLong(),replies=new AtomicLong(),errors=new AtomicLong();
+    public static volatile String lastError="",lastLifecycle="Pas encore démarré";
     private ParcelFileDescriptor tun;
     private FileInputStream input;
     private FileOutputStream output;
@@ -25,8 +28,8 @@ public class ShieldService extends VpnService {
     private final Object lifecycle=new Object();
     @Override public int onStartCommand(Intent intent,int flags,int startId) {
         if(intent!=null && "STOP".equals(intent.getAction())){getSharedPreferences("serein",0).edit().putBoolean("vpn_enabled",false).apply();stopSelf();return START_NOT_STICKY;}
-        if(intent==null && !getSharedPreferences("serein",0).getBoolean("vpn_enabled",false)){stopSelf();return START_NOT_STICKY;}
-        getSharedPreferences("serein",0).edit().putBoolean("vpn_enabled",true).apply();
+        if(intent==null && !getSharedPreferences("serein",0).getBoolean("vpn_enabled",false) && !(Build.VERSION.SDK_INT>=29&&isAlwaysOn())){stopSelf();return START_NOT_STICKY;}
+        getSharedPreferences("serein",0).edit().putBoolean("vpn_enabled",true).apply();lastLifecycle="Démarrage demandé";
         if(running || starting)return START_STICKY;
         problem="";closing=false;starting=true;remoteReady=false;
         NotificationManager nm=getSystemService(NotificationManager.class);
@@ -47,7 +50,7 @@ public class ShieldService extends VpnService {
                     if(tun==null)throw new IOException("VPN permission missing");
                     input=new FileInputStream(tun.getFileDescriptor());output=new FileOutputStream(tun.getFileDescriptor());
                     workers=new ThreadPoolExecutor(8,8,30,TimeUnit.SECONDS,new ArrayBlockingQueue<>(64));
-                    running=true;starting=false;
+                    running=true;starting=false;lastLifecycle="Tunnel établi";
                     reader=new Thread(this::readLoop,"serein-dns");reader.start();
                     updateMode(false);watchNetworks();
                 }
@@ -114,15 +117,16 @@ public class ShieldService extends VpnService {
         }catch(Exception e){if(!closing)haltWithWarning("VPN interrompu : protection désactivée. Réactive Serein pour rétablir le filtre.");}
     }
     private void resolve(byte[] p,int off,byte[] q){
-        if(closing)return;
-        if(Policy.blocked(DnsPacket.question(q),getSharedPreferences("serein",0).getString("domains",""))){send(p,off,DnsPacket.error(q,3));return;}
+        if(closing)return;requests.incrementAndGet();
+        if(Policy.blocked(DnsPacket.question(q),getSharedPreferences("serein",0).getString("domains","")) ){blocked.incrementAndGet();send(p,off,DnsPacket.error(q,3));return;}
         try{
             Network network=physicalNetwork();byte[] reply=query(q,network);
-            if(closing)return;
+            if(closing)return;replies.incrementAndGet();lastError="";
             setUnderlyingNetworks(new Network[]{network});if(!remoteReady)updateMode(true);
             // Recheck changes made while an upstream request was in flight.
-            if(Policy.blocked(DnsPacket.question(q),getSharedPreferences("serein",0).getString("domains","")))send(p,off,DnsPacket.error(q,3));else send(p,off,reply);
+            if(Policy.blocked(DnsPacket.question(q),getSharedPreferences("serein",0).getString("domains",""))){blocked.incrementAndGet();send(p,off,DnsPacket.error(q,3));}else send(p,off,reply);
         }catch(Exception e){
+            errors.incrementAndGet();lastError=e.getClass().getSimpleName();
             send(p,off,DnsPacket.error(q,2));
             // A failed upstream never tears down the local blacklist or changes enabled state.
             if(!closing&&remoteReady)updateMode(false);
@@ -133,7 +137,12 @@ public class ShieldService extends VpnService {
         try{synchronized(this){if(output!=null)output.write(DnsPacket.reply(p,off,r));}}catch(Exception ignored){}
     }
     @Override public void onRevoke(){getSharedPreferences("serein",0).edit().putBoolean("vpn_enabled",false).apply();problem="Autorisation VPN retirée ou autre VPN activé.";stopSelf();}
+    @Override public void onTaskRemoved(Intent rootIntent){
+        lastLifecycle="Fenêtre fermée — tunnel conservé";
+        super.onTaskRemoved(rootIntent);
+    }
     @Override public void onDestroy(){
+        lastLifecycle="Service VPN arrêté";
         synchronized(lifecycle){closing=true;running=false;starting=false;remoteReady=false;try{if(tun!=null)tun.close();}catch(Exception ignored){}}
         if(networkWatch!=null)try{getSystemService(ConnectivityManager.class).unregisterNetworkCallback(networkWatch);}catch(Exception ignored){}
         if(workers!=null)workers.shutdownNow();
