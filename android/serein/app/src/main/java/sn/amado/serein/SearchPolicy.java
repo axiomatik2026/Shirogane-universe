@@ -9,7 +9,7 @@ public final class SearchPolicy {
     public static final String DEFAULT_TERMS="ecchi\nhentai\nhot\nhot classic\nsexy\nnsfw\nporn\nporno\npornographique\npornography\nxxx\nnude\nnudes\nnaked\nrule34\nrule 34\nr34\nlewd\nahegao\noppai\nboobs\ntits\ntopless\n18+";
     public static final Set<String> DEFAULT_APPS=Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
         "com.pinterest","com.pinterest.twa","com.instagram.android","com.google.android.youtube",
-        "com.reddit.frontpage","com.brave.browser","com.android.chrome","org.mozilla.firefox","com.facebook.katana",
+        "com.reddit.frontpage","com.android.chrome","org.mozilla.firefox","com.facebook.katana",
         "com.facebook.lite","com.twitter.android","com.zhiliaoapp.musically","com.ss.android.ugc.trill")));
     public static String normalize(String text){
         if(text==null)return "";

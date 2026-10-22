@@ -9,7 +9,7 @@ public class BootReceiver extends BroadcastReceiver {
         if(intent==null || !(Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())||Intent.ACTION_MY_PACKAGE_REPLACED.equals(intent.getAction())))return;
         GuardRuntimeService.ensure(context);
         SharedPreferences p=context.getSharedPreferences("serein",0);
-        if(LocalGuardState.shouldResumeVpn(p.getBoolean("vpn_enabled",false),p.getBoolean("resume_vpn_on_boot",false),Intent.ACTION_MY_PACKAGE_REPLACED.equals(intent.getAction())) && VpnService.prepare(context)==null){
+        if(p.getBoolean("vpn_enabled",false) && p.getBoolean("resume_vpn_on_boot",false) && VpnService.prepare(context)==null){
             try{context.startForegroundService(new Intent(context,ShieldService.class));}catch(RuntimeException ignored){}
         }
     }

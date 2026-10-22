@@ -8,14 +8,14 @@
  <queries><intent><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent></queries>
  <application android:label="Serein" android:icon="@drawable/shield" android:theme="@android:style/Theme.Material.NoActionBar" android:allowBackup="false" android:usesCleartextTraffic="false" android:supportsRtl="true">
   <activity android:name=".GuardSettingsActivity" android:exported="true"/>
-  <activity android:name=".ProtectionActivity" android:exported="false"/>
+  <activity android:name=".BrowserActivity" android:exported="false"/>
   <activity android:name=".MainActivity" android:exported="true">
    <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
   </activity>
   <service android:stopWithTask="false" android:name=".ShieldService" android:permission="android.permission.BIND_VPN_SERVICE" android:exported="false" android:foregroundServiceType="specialUse">
    <intent-filter><action android:name="android.net.VpnService"/></intent-filter>
    <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE" android:value="User activated local DNS filtering VPN"/>
-   <meta-data android:name="android.net.VpnService.SUPPORTS_ALWAYS_ON" android:value="true"/>
+   <meta-data android:name="android.net.VpnService.SUPPORTS_ALWAYS_ON" android:value="false"/>
   </service>
   <service android:stopWithTask="false" android:name=".SearchGuardService" android:label="Serein — blocage des recherches" android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" android:exported="true">
    <intent-filter><action android:name="android.accessibilityservice.AccessibilityService"/></intent-filter>

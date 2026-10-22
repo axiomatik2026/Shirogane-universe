@@ -6,7 +6,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-/** Pure policy used by the VPN and accessible browser address fields. No browsing logs. */
+/** Pure policy shared by the VPN and the restricted browser. No browsing logs. */
 public final class Policy {
     private static final SearchPolicy SEARCH=new SearchPolicy(SearchPolicy.DEFAULT_TERMS);
     private static final Set<String> BASE = new HashSet<>(Arrays.asList(
@@ -34,16 +34,6 @@ public final class Policy {
         Set<String> all=new HashSet<>(BASE);
         for(String s:custom.split("[\\s,;]+")) { String d=domain(s); if(!d.isEmpty()) all.add(d); }
         for(String d:all) if(h.equals(d)||h.endsWith("."+d)) return true;
-        return false;
-    }
-    /** Only a recognizable address in an address bar, never arbitrary page prose. */
-    public static boolean blockedAddress(String text,String custom){
-        String host=domain(text);return host.contains(".")&&blocked(host,custom);
-    }
-    public static boolean addressMetadata(String id,String hint,String description){
-        String meta=SearchPolicy.normalize((id==null?"":id)+" "+(hint==null?"":hint)+" "+(description==null?"":description));
-        for(String token:new String[]{"url_bar","urlbar","omnibox","address_bar","location_view","mozac_browser_toolbar_url_view","barre d'adresse","address and search"})
-            if(meta.contains(token))return true;
         return false;
     }
     public static boolean allowedUrl(String url, String custom) {
