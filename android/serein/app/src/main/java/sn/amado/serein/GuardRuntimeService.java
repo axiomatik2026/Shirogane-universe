@@ -26,7 +26,7 @@ public class GuardRuntimeService extends Service implements SharedPreferences.On
     public static boolean eligible(Context c){
         SharedPreferences p=c.getSharedPreferences("serein",0);
         return LocalGuardState.shouldRun(p.getBoolean("search_guard",false),p.getBoolean("guard_background",true),accessibilityEnabled(c),
-            p.getStringSet("search_apps",SearchPolicy.DEFAULT_APPS).size(),LocalGuardState.countTerms(p.getString("search_terms",SearchPolicy.DEFAULT_TERMS)));
+            p.getStringSet("search_apps",SearchPolicy.DEFAULT_APPS).size(),LocalGuardState.countTerms(p.getString("search_terms",SearchPolicy.DEFAULT_TERMS))+LocalGuardState.countTerms(p.getString("domains","")));
     }
     public static void ensure(Context c){
         if(!eligible(c)){c.stopService(new Intent(c,GuardRuntimeService.class));return;}
@@ -53,7 +53,7 @@ public class GuardRuntimeService extends Service implements SharedPreferences.On
     private Notification notification(){
         PendingIntent settings=PendingIntent.getActivity(this,31,new Intent(this,GuardSettingsActivity.class),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
         PendingIntent pause=PendingIntent.getService(this,32,new Intent(this,GuardRuntimeService.class).setAction("DISABLE"),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
-        String title=SearchGuardService.connected?"Serein • recherches protégées localement":"Serein • accessibilité en attente";
+        String title=SearchGuardService.connected?"Serein • recherches et liens protégés":"Serein • accessibilité en attente";
         String detail=SearchGuardService.connected?"Fonctionne hors connexion, même Serein fermé.":"Ouvre les réglages pour vérifier l’accès d’accessibilité.";
         return new Notification.Builder(this,CHANNEL).setSmallIcon(R.drawable.shield).setContentTitle(title).setContentText(detail)
             .setStyle(new Notification.BigTextStyle().bigText(detail)).setContentIntent(settings).setOngoing(true).setOnlyAlertOnce(true)
@@ -61,7 +61,7 @@ public class GuardRuntimeService extends Service implements SharedPreferences.On
             .addAction(new Notification.Action.Builder(null,"Désactiver recherches",pause).build()).build();
     }
     @Override public void onSharedPreferenceChanged(SharedPreferences p,String key){
-        if(key.equals("search_guard")||key.equals("guard_background")||key.equals("search_apps")||key.equals("search_terms")){
+        if(key.equals("search_guard")||key.equals("guard_background")||key.equals("search_apps")||key.equals("search_terms")||key.equals("domains")){
             if(!eligible(this))stopSelf();else if(running)getSystemService(NotificationManager.class).notify(NOTIFICATION_ID,notification());
         }
     }

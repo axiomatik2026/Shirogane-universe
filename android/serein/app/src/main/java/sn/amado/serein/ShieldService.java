@@ -7,7 +7,7 @@ import android.os.*;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.net.ssl.HttpsURLConnection;
 
 public class ShieldService extends VpnService {
@@ -18,7 +18,8 @@ public class ShieldService extends VpnService {
     private FileOutputStream output;
     private Thread reader, startup;
     private ThreadPoolExecutor workers;
-    private final AtomicInteger failures=new AtomicInteger();
+    public static volatile boolean remoteReady=false;
+    private ConnectivityManager.NetworkCallback networkWatch;
     private final Set<HttpsURLConnection> connections=Collections.synchronizedSet(new HashSet<>());
     private volatile boolean closing=false;
     private final Object lifecycle=new Object();
@@ -27,34 +28,45 @@ public class ShieldService extends VpnService {
         if(intent==null && !getSharedPreferences("serein",0).getBoolean("vpn_enabled",false)){stopSelf();return START_NOT_STICKY;}
         getSharedPreferences("serein",0).edit().putBoolean("vpn_enabled",true).apply();
         if(running || starting)return START_STICKY;
-        problem="";closing=false;starting=true;failures.set(0);
+        problem="";closing=false;starting=true;remoteReady=false;
         NotificationManager nm=getSystemService(NotificationManager.class);
         nm.createNotificationChannel(new NotificationChannel("shield","Protection Serein",NotificationManager.IMPORTANCE_LOW));
         nm.createNotificationChannel(new NotificationChannel("errors","État du filtre",NotificationManager.IMPORTANCE_DEFAULT));
         nm.cancel(2);
-        startForeground(1,notification("Serein • vérification de la connexion","Le VPN n’est pas encore activé.","shield"));
+        startForeground(1,notification("Serein • activation locale","Chargement de la liste noire enregistrée.","shield"));
         startup=new Thread(()->{
             try {
-                Network network=physicalNetwork();
-                byte[] reply=query(DnsHttps.probe(),network);
-                if((reply[3]&15)!=0 || DnsPacket.u16(reply,6)==0)throw new IOException("DNS preflight failed");
+                Network network=null;try{network=physicalNetwork();}catch(IOException offline){}
+                // Establish locally even in airplane mode; never gate the blacklist on a server.
                 synchronized(lifecycle){
                     if(closing)return;
                     tun=new Builder().setSession("Serein — filtre adulte").addAddress("10.111.0.1",32)
                         .addDnsServer("10.111.0.2").addRoute("10.111.0.2",32)
                         .allowFamily(android.system.OsConstants.AF_INET6).setMtu(1500).setBlocking(true)
-                        .setUnderlyingNetworks(new Network[]{network}).establish();
+                        .setUnderlyingNetworks(network==null?null:new Network[]{network}).establish();
                     if(tun==null)throw new IOException("VPN permission missing");
                     input=new FileInputStream(tun.getFileDescriptor());output=new FileOutputStream(tun.getFileDescriptor());
                     workers=new ThreadPoolExecutor(8,8,30,TimeUnit.SECONDS,new ArrayBlockingQueue<>(64));
                     running=true;starting=false;
                     reader=new Thread(this::readLoop,"serein-dns");reader.start();
-                    nm.notify(1,notification("Serein • filtrage DNS actif","Filtre adulte et liste personnelle • HTTPS","shield"));
+                    updateMode(false);watchNetworks();
                 }
-            }catch(Exception e){ if(!closing)haltWithWarning("Filtre inaccessible : protection désactivée. Internet reste disponible sans filtre. Réessaie sur un autre réseau."); }
+            }catch(Exception e){ if(!closing)haltWithWarning("Activation du VPN impossible : protection DNS désactivée. Vérifie l’autorisation VPN."); }
             finally{starting=false;}
-        },"serein-preflight");
+        },"serein-start");
         startup.start();return START_STICKY;
+    }
+    private void updateMode(boolean ready){
+        if(closing)return;boolean changed=remoteReady!=ready;remoteReady=ready;
+        problem="";
+        if(changed||running)getSystemService(NotificationManager.class).notify(1,notification(ready?"Serein • filtrage DNS actif":"Serein • liste noire locale active",ready?"Liste personnelle + filtre adulte HTTPS":"Protection locale maintenue ; filtre distant en attente.","shield"));
+    }
+    private void watchNetworks(){
+        networkWatch=new ConnectivityManager.NetworkCallback(){
+            @Override public void onAvailable(Network n){if(!closing)try{setUnderlyingNetworks(new Network[]{physicalNetwork()});}catch(Exception ignored){}}
+            @Override public void onLost(Network n){if(!closing){updateMode(false);try{setUnderlyingNetworks(new Network[]{physicalNetwork()});}catch(Exception e){setUnderlyingNetworks(null);}}}
+        };
+        getSystemService(ConnectivityManager.class).registerNetworkCallback(new NetworkRequest.Builder().addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET).addCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN).build(),networkWatch);
     }
     private Notification notification(String title,String body,String channel){
         PendingIntent open=PendingIntent.getActivity(this,0,new Intent(this,MainActivity.class),PendingIntent.FLAG_IMMUTABLE);
@@ -107,10 +119,13 @@ public class ShieldService extends VpnService {
         try{
             Network network=physicalNetwork();byte[] reply=query(q,network);
             if(closing)return;
-            setUnderlyingNetworks(new Network[]{network});failures.set(0);send(p,off,reply);
+            setUnderlyingNetworks(new Network[]{network});if(!remoteReady)updateMode(true);
+            // Recheck changes made while an upstream request was in flight.
+            if(Policy.blocked(DnsPacket.question(q),getSharedPreferences("serein",0).getString("domains","")))send(p,off,DnsPacket.error(q,3));else send(p,off,reply);
         }catch(Exception e){
             send(p,off,DnsPacket.error(q,2));
-            if(failures.incrementAndGet()>=3)haltWithWarning("Connexion au filtre perdue : VPN arrêté, accès Internet rétabli sans filtre. Réactive Serein pour te protéger.");
+            // A failed upstream never tears down the local blacklist or changes enabled state.
+            if(!closing&&remoteReady)updateMode(false);
         }
     }
     private void send(byte[] p,int off,byte[] r){
@@ -119,7 +134,8 @@ public class ShieldService extends VpnService {
     }
     @Override public void onRevoke(){getSharedPreferences("serein",0).edit().putBoolean("vpn_enabled",false).apply();problem="Autorisation VPN retirée ou autre VPN activé.";stopSelf();}
     @Override public void onDestroy(){
-        synchronized(lifecycle){closing=true;running=false;starting=false;try{if(tun!=null)tun.close();}catch(Exception ignored){}}
+        synchronized(lifecycle){closing=true;running=false;starting=false;remoteReady=false;try{if(tun!=null)tun.close();}catch(Exception ignored){}}
+        if(networkWatch!=null)try{getSystemService(ConnectivityManager.class).unregisterNetworkCallback(networkWatch);}catch(Exception ignored){}
         if(workers!=null)workers.shutdownNow();
         synchronized(connections){for(HttpsURLConnection c:connections)c.disconnect();connections.clear();}
         try{if(input!=null)input.close();}catch(Exception ignored){}

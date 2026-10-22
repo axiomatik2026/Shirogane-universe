@@ -21,6 +21,14 @@ public class BackgroundTests {
   check(local.blocked("ECCHI anime"),"sensitive search blocked with networking prohibited");
   check(local.blocked("hot classic"),"custom phrase blocked without networking");
   check(!local.blocked("anime Naruto"),"ordinary query stays allowed offline");
+  String saved="example.com\n";
+  check(Policy.blocked("sub.example.com",saved),"saved custom subdomain blocked without network");
+  check(Policy.blockedAddress("https://example.com/path?q=1",saved),"pasted URL and cached address blocked offline");
+  check(!Policy.blockedAddress("example.com.evil.net",saved),"suffix spoof not blocked as custom domain");
+  check(!Policy.blockedAddress("plain query",saved),"plain search is not a URL");
+  check(!Policy.blockedAddress("https://ordinary.test",saved),"ordinary address allowed offline");
+  check(Policy.addressMetadata("com.android.chrome:id/url_bar","",""),"Chrome address identified");
+  check(!Policy.addressMetadata("image_caption","",""),"page caption not an address");
   System.out.println(count+" offline/background lifecycle assertions passed");
  }
 }

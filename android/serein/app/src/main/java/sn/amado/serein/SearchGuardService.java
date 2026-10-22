@@ -38,7 +38,7 @@ public class SearchGuardService extends AccessibilityService implements SharedPr
     @Override public void onSharedPreferenceChanged(SharedPreferences p,String key){
         if("search_terms".equals(key))policy=new SearchPolicy(prefs.getString("search_terms",SearchPolicy.DEFAULT_TERMS));
         if("search_guard".equals(key)||"search_apps".equals(key))configure();
-        if("search_guard".equals(key)||"search_apps".equals(key)||"search_terms".equals(key)||"guard_background".equals(key))GuardRuntimeService.ensure(this);
+        if("search_guard".equals(key)||"search_apps".equals(key)||"search_terms".equals(key)||"guard_background".equals(key)||"domains".equals(key))GuardRuntimeService.ensure(this);
     }
     @Override public void onAccessibilityEvent(AccessibilityEvent event){
         if(!enabled() || event==null || event.isPassword())return;
@@ -75,7 +75,9 @@ public class SearchGuardService extends AccessibilityService implements SharedPr
                         // Content descriptions are checked only in an identified search field,
                         // or in explicitly enabled strict mode, never as an image classifier.
                         if(text.isEmpty() && (search||strict) && node.getContentDescription()!=null)text=node.getContentDescription().toString();
-                        if(policy.shouldBlock(text,false,true,search,strict)){
+                        boolean blockedLink=Policy.addressMetadata(node.getViewIdResourceName(),str(node.getHintText()),str(node.getContentDescription())) &&
+                            Policy.blockedAddress(text,prefs.getString("domains",""));
+                        if(blockedLink||policy.shouldBlock(text,false,true,search,strict)){
                             lastBlock=SystemClock.uptimeMillis();
                             if(node.isEditable()){
                                 Bundle args=new Bundle();args.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE,"");
@@ -83,7 +85,7 @@ public class SearchGuardService extends AccessibilityService implements SharedPr
                             }
                             // Home reliably leaves results, whereas Back may only dismiss IME.
                             boolean left=performGlobalAction(GLOBAL_ACTION_HOME);
-                            Toast.makeText(this,left?"Serein : recherche sensible bloquée":"Serein : recherche détectée — ferme cette page",Toast.LENGTH_LONG).show();
+                            Toast.makeText(this,left?(blockedLink?"Serein : site de la liste noire bloqué":"Serein : recherche sensible bloquée"):"Serein : recherche détectée — ferme cette page",Toast.LENGTH_LONG).show();
                             if(!left){try{startActivity(new Intent(this,MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP));}catch(Exception ignored){}}
                             return;
                         }
