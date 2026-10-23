@@ -1,0 +1,29 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'com.sheself.app'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.sheself.app'
+        minSdk 24
+        targetSdk 35
+        versionCode 100
+        versionName '1.0.0'
+    }
+
+    buildTypes {
+        debug { debuggable true }
+        release { minifyEnabled false }
+    }
+
+    // Source unique pour le site et l'application Android : pas de duplication du questionnaire.
+    sourceSets {
+        main.assets.srcDirs = ['../../web']
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
